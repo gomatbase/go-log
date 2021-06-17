@@ -1,18 +1,24 @@
+// Copyright 2020 GOM. All rights reserved.
+// Since 25/06/2021 By GOM
+// Licensed under MIT License
+
 package log
 
 import (
 	l "log"
 )
 
+// logger Simple implementation of a Logger, using the standard go log as the actual logging framework
 type logger struct {
-	options   *Options
-	level     uint
-	name      string
-	log       *l.Logger
-	critical  func(...interface{})
-	criticalf func(string, ...interface{})
+	options   *Options                     // the original options used to create the logger
+	level     uint                         // the current log level
+	name      string                       // the name of the logger (also the prefix for logging)
+	log       *l.Logger                    // standard fo log.Logger to actually log the entries
+	critical  func(...interface{})         // function used to log criticals
+	criticalf func(string, ...interface{}) // function used to log criticals with a format string
 }
 
+// SetLevel sets the level of the logger
 func (logger *logger) SetLevel(level uint) {
 	logger.level = level
 }
