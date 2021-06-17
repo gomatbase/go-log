@@ -89,6 +89,10 @@ func TestGettingLog(t *testing.T) {
 		if log.Level() != TRACE {
 			t.Error("Overriding log level should update current log level")
 		}
+		log, e = Get("Test Override")
+		if e != nil {
+			t.Error("Getting log with non-default options should not raise an error:", e)
+		}
 	})
 }
 

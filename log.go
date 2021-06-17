@@ -87,7 +87,12 @@ type Logger interface {
 // the default options (warning level, logs to stdout and non-failing criticals). The name must be a non-empty string
 // (may be spaces).
 func Get(name string) (Logger, error) {
-	return GetWithOptions(name, WithoutOptions())
+	logger, e := GetWithOptions(name, WithoutOptions())
+	var returnError error
+	if name != DEFAULT && e != nil && e != errReinitializingExistingLogger {
+		returnError = e
+	}
+	return logger, returnError
 }
 
 // GetWithOptions will create a log with the provided options if it doesn't exist yet or returns an existing log if
@@ -95,7 +100,7 @@ func Get(name string) (Logger, error) {
 // logger with different options. The name logger may not be an empty string (can be filled spaces).
 func GetWithOptions(name string, options *Options) (Logger, error) {
 	if len(name) == 0 {
-		return nil, errors.New("name of logger cannot be empty")
+		return nil, errEmptyLoggerName
 	}
 	return getWithOptions(name, options)
 }
@@ -112,7 +117,7 @@ func getWithOptions(name string, options *Options) (Logger, error) {
 		loggers[name] = newLogger(name, options)
 		logger = loggers[name]
 	} else if !logger.options.equals(options) {
-		e = errors.New("trying to initialize an already initialized logger with different options")
+		e = errReinitializingExistingLogger
 	}
 
 	return logger, e
@@ -122,10 +127,6 @@ func getWithOptions(name string, options *Options) (Logger, error) {
 // and allows changing the options of the default logger. It is not thread-safe and aside the use to set the options
 // for the default logger it shouldn't be used
 func OverrideLogWithOptions(name string, options *Options) (Logger, error) {
-	if len(name) == 0 {
-		return nil, errors.New("name of logger cannot be empty")
-	}
-
 	lock.Lock()
 	defer lock.Unlock()
 
