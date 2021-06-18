@@ -14,6 +14,7 @@ var buf = &bytes.Buffer{}
 
 func TestMain(m *testing.M) {
 	defaultLogger = newLogger("", WithOptions().WithWriter(buf))
+	loggers[""] = defaultLogger
 	os.Exit(m.Run())
 }
 

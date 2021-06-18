@@ -107,7 +107,7 @@ func GetWithOptions(name string, options *Options) (Logger, error) {
 
 // private getWithOptions function that actually fetches or creates the logger. The internal version allows an empty
 // string as a name allowing the creation of the DEFAULT logger.
-func getWithOptions(name string, options *Options) (Logger, error) {
+func getWithOptions(name string, options *Options) (*logger, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
@@ -181,6 +181,20 @@ func newLogger(name string, options *Options) *logger {
 // SetLevel sets the log level of the default logger
 func SetLevel(level uint) {
 	defaultLogger.SetLevel(level)
+}
+
+// SetLoggerLevel sets the log level of a logger by name. DEFAULT may be used to set the default logger level.
+func SetLoggerLevel(name string, level uint) error {
+	lock.Lock()
+	logger, found := loggers[name]
+	lock.Unlock()
+
+	if !found {
+		return errLoggerDoesNotExist
+	}
+
+	logger.SetLevel(level)
+	return nil
 }
 
 // Level returns the current log level of the default logger

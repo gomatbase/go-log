@@ -107,3 +107,38 @@ func TestLevelNames(t *testing.T) {
 		t.Errorf("Unexpected levels should be unknown got %v with level 1000", returnedName)
 	}
 }
+
+func TestSettingLogLevels(t *testing.T) {
+	t.Run("Test setting default logger log level", func(t *testing.T) {
+		SetLevel(ERROR)
+		if Level() != ERROR {
+			t.Error("Failed to set default logger level to ERROR")
+		}
+
+		if e := SetLoggerLevel(DEFAULT, CRITICAL); e != nil {
+			t.Error("Failed to set default logger level to CRITICAL")
+		}
+		if Level() != CRITICAL {
+			t.Error("Default logger level did not change")
+		}
+	})
+
+	t.Run("Test setting logger log level", func(t *testing.T) {
+		loggerName := "LOG-LEVEL-LOG"
+		logger, e := Get(loggerName)
+		if e != nil {
+			t.Error("Failed to get LOG-LEVEL-LOG")
+		}
+		if logger.Level() != WARNING {
+			t.Error("Logger with default init not in warning level")
+		}
+
+		if e := SetLoggerLevel(loggerName, CRITICAL); e != nil {
+			t.Error("Failed to set", loggerName, "logger level to CRITICAL")
+		}
+		if logger.Level() != CRITICAL {
+			t.Error("Failed to set", loggerName, "logger level to CRITICAL")
+		}
+	})
+
+}
