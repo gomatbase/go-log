@@ -13,8 +13,8 @@ import (
 var buf = &bytes.Buffer{}
 
 func TestMain(m *testing.M) {
-	defaultLogger = newLogger("", WithOptions().WithWriter(buf))
-	loggers[""] = defaultLogger
+	defaultLogger = newLogger(DEFAULT, WithOptions().WithWriter(buf))
+	loggers[DEFAULT] = defaultLogger
 	os.Exit(m.Run())
 }
 

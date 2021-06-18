@@ -20,7 +20,7 @@ const (
 )
 
 // DEFAULT is the name of the default logger
-const DEFAULT = ""
+const DEFAULT = "DEFAULT"
 
 // dictionary to translate the log level to it's name (for the default severity scale)
 var levelNames = []string{"ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
@@ -89,7 +89,7 @@ type Logger interface {
 func Get(name string) (Logger, error) {
 	logger, e := GetWithOptions(name, WithoutOptions())
 	var returnError error
-	if name != DEFAULT && e != nil && e != errReinitializingExistingLogger {
+	if e != nil && e != errReinitializingExistingLogger {
 		returnError = e
 	}
 	return logger, returnError
@@ -156,9 +156,9 @@ func newLogger(name string, options *Options) *logger {
 		o = WithOptions()
 	}
 
-	prefix := name
-	if len(prefix) > 0 {
-		prefix = prefix + " - "
+	prefix := ""
+	if name != DEFAULT {
+		prefix = name + " - "
 	}
 	logger := logger{
 		options: o,
