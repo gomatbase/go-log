@@ -197,9 +197,67 @@ func SetLoggerLevel(name string, level uint) error {
 	return nil
 }
 
+// SetLoggerLevels sets the log levels of several loggers at once. If any logger is not found an error is raised
+func SetLoggerLevels(loggerLevels map[string]uint) map[string]uint {
+	result := make(map[string]uint)
+
+	for k, l := range loggerLevels {
+		if e := SetLoggerLevel(k, l); e == nil {
+			result[k] = l
+		}
+	}
+
+	return result
+}
+
 // Level returns the current log level of the default logger
 func Level() uint {
 	return defaultLogger.Level()
+}
+
+// LoggerLevels gets the current log levels of all known loggers
+func LoggerLevels() map[string]uint {
+	loggerLevels := make(map[string]uint)
+	lock.Lock()
+	for k, l := range loggers {
+		loggerLevels[k] = l.level
+	}
+	lock.Unlock()
+	return loggerLevels
+}
+
+// LoggerLevel gets the current log level of the logger with the given name. errLoggerDoesNotExist is returned as an
+// error if a logger with the given name doesn't is unknown.
+func LoggerLevel(name string) (uint, error) {
+	lock.Lock()
+	logger, found := loggers[name]
+	lock.Unlock()
+
+	if !found {
+		return 0, errLoggerDoesNotExist
+	}
+
+	return logger.level, nil
+}
+
+// LoggerLevelName gets the current log level name of the logger with the given name. errLoggerDoesNotExist is returned as an
+// error if a logger with the given name doesn't is unknown. Utility method for loggers using the standard severity scale.
+func LoggerLevelName(name string) (string, error) {
+	if level, e := LoggerLevel(name); e == nil {
+		return LevelName(level), nil
+	} else {
+		return "", e
+	}
+}
+
+// LoggerLevelNames gets the current log level names of all known loggers. Only relevant if logger is using the standard severity scale.
+func LoggerLevelNames() map[string]string {
+	loggerLevels := LoggerLevels()
+	loggerLevelNames := make(map[string]string)
+	for k, l := range loggerLevels {
+		loggerLevelNames[k] = LevelName(l)
+	}
+	return loggerLevelNames
 }
 
 // LevelName is a convenience method to translate the log level into a name. It only works for loggers implementing
