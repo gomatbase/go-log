@@ -23,7 +23,7 @@ const (
 const DEFAULT = "DEFAULT"
 
 // dictionary to translate the log level to it's name (for the default severity scale)
-var levelNames = []string{"ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
+var levelNames = []string{"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
 
 var (
 	loggers          = make(map[string]*logger)                  // map of all existing loggers. Indexed by their names.
@@ -197,7 +197,7 @@ func SetLoggerLevel(name string, level uint) error {
 	return nil
 }
 
-// SetLoggerLevels sets the log levels of several loggers at once. If any logger is not found an error is raised
+// SetLoggerLevels sets the log levels of several loggers at once. If any logger is not found it will be omitted from the response
 func SetLoggerLevels(loggerLevels map[string]uint) map[string]uint {
 	result := make(map[string]uint)
 
