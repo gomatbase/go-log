@@ -9,5 +9,5 @@ func (le logError) Error() string {
 const (
 	errEmptyLoggerName              = logError("Logger name may not be empty")
 	errReinitializingExistingLogger = logError("trying to initialize an already initialized logger with different options")
-	errLoggerDoesNotExist           = logError("logger with give name doesn't exist")
+	errLoggerDoesNotExist           = logError("logger with given name doesn't exist")
 )
