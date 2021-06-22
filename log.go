@@ -89,7 +89,7 @@ type Logger interface {
 func Get(name string) (Logger, error) {
 	logger, e := GetWithOptions(name, WithoutOptions())
 	var returnError error
-	if e != nil && e != errReinitializingExistingLogger {
+	if e != nil && e != ErrReinitializingExistingLogger {
 		returnError = e
 	}
 	return logger, returnError
@@ -100,7 +100,7 @@ func Get(name string) (Logger, error) {
 // logger with different options. The name logger may not be an empty string (can be filled spaces).
 func GetWithOptions(name string, options *Options) (Logger, error) {
 	if len(name) == 0 {
-		return nil, errEmptyLoggerName
+		return nil, ErrEmptyLoggerName
 	}
 	return getWithOptions(name, options)
 }
@@ -117,7 +117,7 @@ func getWithOptions(name string, options *Options) (*logger, error) {
 		loggers[name] = newLogger(name, options)
 		logger = loggers[name]
 	} else if !logger.options.equals(options) {
-		e = errReinitializingExistingLogger
+		e = ErrReinitializingExistingLogger
 	}
 
 	return logger, e
@@ -177,7 +177,7 @@ func SetLoggerLevel(name string, level uint) error {
 	lock.Unlock()
 
 	if !found {
-		return errLoggerDoesNotExist
+		return ErrLoggerDoesNotExist
 	}
 
 	logger.SetLevel(level)
@@ -213,7 +213,7 @@ func LoggerLevels() map[string]uint {
 	return loggerLevels
 }
 
-// LoggerLevel gets the current log level of the logger with the given name. errLoggerDoesNotExist is returned as an
+// LoggerLevel gets the current log level of the logger with the given name. ErrLoggerDoesNotExist is returned as an
 // error if a logger with the given name doesn't is unknown.
 func LoggerLevel(name string) (uint, error) {
 	lock.Lock()
@@ -221,13 +221,13 @@ func LoggerLevel(name string) (uint, error) {
 	lock.Unlock()
 
 	if !found {
-		return 0, errLoggerDoesNotExist
+		return 0, ErrLoggerDoesNotExist
 	}
 
 	return logger.level, nil
 }
 
-// LoggerLevelName gets the current log level name of the logger with the given name. errLoggerDoesNotExist is returned as an
+// LoggerLevelName gets the current log level name of the logger with the given name. ErrLoggerDoesNotExist is returned as an
 // error if a logger with the given name doesn't is unknown. Utility method for loggers using the standard severity scale.
 func LoggerLevelName(name string) (string, error) {
 	if level, e := LoggerLevel(name); e == nil {
