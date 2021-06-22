@@ -282,7 +282,7 @@ func TestGettingLogLevels(t *testing.T) {
 			t.Error("LOG2 logger level incorrect :", level)
 		}
 
-		if level, e := LoggerLevel("UNKNOWN"); e == nil {
+		if level, e := LoggerLevelName("UNKNOWN"); e == nil {
 			t.Error("Getting level for unknown logger should error :", level)
 		}
 	})
