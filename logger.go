@@ -5,6 +5,7 @@
 package log
 
 import (
+	"fmt"
 	l "log"
 )
 
@@ -77,12 +78,12 @@ func (logger *logger) Tracef(format string, v ...interface{}) {
 
 func (logger *logger) Println(level uint, v ...interface{}) {
 	if level <= logger.level {
-		logger.log.Println(v...)
+		logger.log.Output(3, fmt.Sprintln(v...))
 	}
 }
 
 func (logger *logger) Printf(level uint, format string, v ...interface{}) {
 	if level <= logger.level {
-		logger.log.Printf(format, v...)
+		logger.log.Output(3, fmt.Sprintf(format, v...))
 	}
 }

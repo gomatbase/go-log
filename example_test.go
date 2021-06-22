@@ -615,6 +615,6 @@ func ExampleCustomLoggerWithPattern() {
 	os.Stdout.WriteString(buf.String())
 
 	// Output:
-	// PATTERN - example_test.go:612: CRT
-	// PATTERN - example_test.go:613: ERR
+	// PATTERN - example_test.go:608: CRT
+	// PATTERN - example_test.go:609: ERR
 }
