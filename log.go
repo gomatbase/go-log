@@ -136,13 +136,7 @@ func OverrideLogWithOptions(name string, options *Options) (Logger, error) {
 	} else if !logger.options.equals(options) {
 		logger.log = l.New(options.writer, logger.name+" - ", options.dateFlags)
 		logger.level = options.startingLevel
-		if options.failingCriticals {
-			logger.critical = logger.log.Fatalln
-			logger.criticalf = logger.log.Fatalf
-		} else {
-			logger.critical = logger.log.Println
-			logger.criticalf = logger.log.Printf
-		}
+		logger.criticalFailure = options.failingCriticals
 		logger.options = options
 	}
 
@@ -161,18 +155,11 @@ func newLogger(name string, options *Options) *logger {
 		prefix = name + " - "
 	}
 	logger := logger{
-		options: o,
-		level:   o.startingLevel,
-		name:    name,
-		log:     l.New(o.writer, prefix, o.dateFlags),
-	}
-
-	if o.failingCriticals {
-		logger.critical = logger.log.Fatalln
-		logger.criticalf = logger.log.Fatalf
-	} else {
-		logger.critical = logger.log.Println
-		logger.criticalf = logger.log.Printf
+		options:         o,
+		level:           o.startingLevel,
+		name:            name,
+		log:             l.New(o.writer, prefix, o.dateFlags),
+		criticalFailure: o.failingCriticals,
 	}
 
 	return &logger
@@ -281,60 +268,60 @@ func Criticalf(format string, v ...interface{}) {
 
 // Error logs a error log entry through the default logger
 func Error(v ...interface{}) {
-	defaultLogger.Error(v...)
+	defaultLogger.println(ERROR, v...)
 }
 
 // Errorf logs a formatted error log entry through the default logger
 func Errorf(format string, v ...interface{}) {
-	defaultLogger.Errorf(format, v...)
+	defaultLogger.printf(ERROR, format, v...)
 }
 
 // Warning logs a warning log entry through the default logger
 func Warning(v ...interface{}) {
-	defaultLogger.Println(WARNING, v...)
+	defaultLogger.println(WARNING, v...)
 }
 
 // Warningf logs a formatted warning log entry through the default logger
 func Warningf(format string, v ...interface{}) {
-	defaultLogger.Printf(WARNING, format, v...)
+	defaultLogger.printf(WARNING, format, v...)
 }
 
 // Info logs a info log entry through the default logger
 func Info(v ...interface{}) {
-	defaultLogger.Println(INFO, v...)
+	defaultLogger.println(INFO, v...)
 }
 
 // Infof logs a formatted info log entry through the default logger
 func Infof(format string, v ...interface{}) {
-	defaultLogger.Printf(INFO, format, v...)
+	defaultLogger.printf(INFO, format, v...)
 }
 
 // Debug logs a debug log entry through the default logger
 func Debug(v ...interface{}) {
-	defaultLogger.Println(DEBUG, v...)
+	defaultLogger.println(DEBUG, v...)
 }
 
 // Debugf logs a formatted debug log entry through the default logger
 func Debugf(format string, v ...interface{}) {
-	defaultLogger.Printf(DEBUG, format, v...)
+	defaultLogger.printf(DEBUG, format, v...)
 }
 
 // Trace logs a trace log entry through the default logger
 func Trace(v ...interface{}) {
-	defaultLogger.Println(TRACE, v...)
+	defaultLogger.println(TRACE, v...)
 }
 
 // Tracef logs a formatted trace log entry through the default logger
 func Tracef(format string, v ...interface{}) {
-	defaultLogger.Printf(TRACE, format, v...)
+	defaultLogger.printf(TRACE, format, v...)
 }
 
 // Println logs a log entry at the given log level  through the default logger
 func Println(level uint, v ...interface{}) {
-	defaultLogger.Println(level, v...)
+	defaultLogger.println(level, v...)
 }
 
 // Printf logs a formatted log entry at the given log level through the default logger
 func Printf(level uint, format string, v ...interface{}) {
-	defaultLogger.Printf(level, format, v...)
+	defaultLogger.printf(level, format, v...)
 }

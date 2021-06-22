@@ -5,7 +5,6 @@
 package log
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -80,10 +79,6 @@ func TestGettingLog(t *testing.T) {
 		if logWriter != log.(*logger).log {
 			t.Error("Overriding log options with same options should not affect the log writer.")
 		}
-		if reflect.ValueOf(log.(*logger).critical).Pointer() != reflect.ValueOf(logWriter.Println).Pointer() ||
-			reflect.ValueOf(log.(*logger).criticalf).Pointer() != reflect.ValueOf(logWriter.Printf).Pointer() {
-			t.Error("Overriding log options with same options should not affect the critical functions")
-		}
 	})
 
 	t.Run("Test overriding existing log with new options", func(t *testing.T) {
@@ -101,10 +96,6 @@ func TestGettingLog(t *testing.T) {
 		}
 		if logWriter == log.(*logger).log {
 			t.Error("Overriding log options with new options should update the log writer.")
-		}
-		if reflect.ValueOf(log.(*logger).critical).Pointer() != reflect.ValueOf(log.(*logger).log.Println).Pointer() ||
-			reflect.ValueOf(log.(*logger).criticalf).Pointer() != reflect.ValueOf(log.(*logger).log.Printf).Pointer() {
-			t.Error("Overriding log options with new options should affect the critical functions to use the new log writter.")
 		}
 		if log.Level() != TRACE {
 			t.Error("Overriding log level should update current log level")

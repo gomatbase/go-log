@@ -607,6 +607,7 @@ func ExampleCustomLoggerWithPattern() {
 
 	logger.Criticalf("%v", "CRT")
 	logger.Errorf("%v", "ERR")
+	logger.Printf(ERROR, "%v", "ERR")
 	logger.Warningf("%v", "WRN")
 	logger.Infof("%v", "INF")
 	logger.Debugf("%v", "DBG")
@@ -617,4 +618,5 @@ func ExampleCustomLoggerWithPattern() {
 	// Output:
 	// PATTERN - example_test.go:608: CRT
 	// PATTERN - example_test.go:609: ERR
+	// PATTERN - example_test.go:610: ERR
 }

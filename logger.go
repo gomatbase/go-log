@@ -7,16 +7,16 @@ package log
 import (
 	"fmt"
 	l "log"
+	"os"
 )
 
 // logger Simple implementation of a Logger, using the standard go log as the actual logging framework
 type logger struct {
-	options   *Options                     // the original options used to create the logger
-	level     uint                         // the current log level
-	name      string                       // the name of the logger (also the prefix for logging)
-	log       *l.Logger                    // standard fo log.Logger to actually log the entries
-	critical  func(...interface{})         // function used to log criticals
-	criticalf func(string, ...interface{}) // function used to log criticals with a format string
+	options         *Options  // the original options used to create the logger
+	level           uint      // the current log level
+	name            string    // the name of the logger (also the prefix for logging)
+	log             *l.Logger // standard fo log.Logger to actually log the entries
+	criticalFailure bool
 }
 
 // SetLevel sets the level of the logger
@@ -29,60 +29,74 @@ func (logger *logger) Level() uint {
 }
 
 func (logger *logger) Critical(v ...interface{}) {
-	logger.critical(v...)
+	logger.log.Output(2, fmt.Sprintln(v...))
+	if logger.criticalFailure {
+		os.Exit(1)
+	}
 }
 
 func (logger *logger) Criticalf(format string, v ...interface{}) {
-	logger.criticalf(format, v...)
+	logger.log.Output(2, fmt.Sprintf(format, v...))
+	if logger.criticalFailure {
+		os.Exit(1)
+	}
 }
 
 func (logger *logger) Error(v ...interface{}) {
-	logger.Println(ERROR, v...)
+	logger.println(ERROR, v...)
 }
 
 func (logger *logger) Errorf(format string, v ...interface{}) {
-	logger.Printf(ERROR, format, v...)
+	logger.printf(ERROR, format, v...)
 }
 
 func (logger *logger) Warning(v ...interface{}) {
-	logger.Println(WARNING, v...)
+	logger.println(WARNING, v...)
 }
 
 func (logger *logger) Warningf(format string, v ...interface{}) {
-	logger.Printf(WARNING, format, v...)
+	logger.printf(WARNING, format, v...)
 }
 
 func (logger *logger) Info(v ...interface{}) {
-	logger.Println(INFO, v...)
+	logger.println(INFO, v...)
 }
 
 func (logger *logger) Infof(format string, v ...interface{}) {
-	logger.Printf(INFO, format, v...)
+	logger.printf(INFO, format, v...)
 }
 
 func (logger *logger) Debug(v ...interface{}) {
-	logger.Println(DEBUG, v...)
+	logger.println(DEBUG, v...)
 }
 
 func (logger *logger) Debugf(format string, v ...interface{}) {
-	logger.Printf(DEBUG, format, v...)
+	logger.printf(DEBUG, format, v...)
 }
 
 func (logger *logger) Trace(v ...interface{}) {
-	logger.Println(TRACE, v...)
+	logger.println(TRACE, v...)
 }
 
 func (logger *logger) Tracef(format string, v ...interface{}) {
-	logger.Printf(TRACE, format, v...)
+	logger.printf(TRACE, format, v...)
 }
 
 func (logger *logger) Println(level uint, v ...interface{}) {
+	logger.println(level, v...)
+}
+
+func (logger *logger) Printf(level uint, format string, v ...interface{}) {
+	logger.printf(level, format, v...)
+}
+
+func (logger *logger) println(level uint, v ...interface{}) {
 	if level <= logger.level {
 		logger.log.Output(3, fmt.Sprintln(v...))
 	}
 }
 
-func (logger *logger) Printf(level uint, format string, v ...interface{}) {
+func (logger *logger) printf(level uint, format string, v ...interface{}) {
 	if level <= logger.level {
 		logger.log.Output(3, fmt.Sprintf(format, v...))
 	}
