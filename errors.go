@@ -1,3 +1,7 @@
+// Copyright 2020 GOM. All rights reserved.
+// Since 25/06/2021 By GOM
+// Licensed under MIT License
+
 package log
 
 // Simple error type for log errors
