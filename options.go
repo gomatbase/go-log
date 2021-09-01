@@ -5,9 +5,7 @@
 package log
 
 import (
-	"io"
 	l "log"
-	"os"
 )
 
 const (
@@ -28,30 +26,30 @@ const (
 	Time = iota
 	Name
 	Source
+	LongSource
 	Separator
 	LogLevel
 )
 
+// Types of loggers
+const (
+	standard = iota
+)
+
 // Options holds the configuration for a new logger and provides methods to setup the configurable options
 type Options struct {
-	dateFlags        int       // format flags for the logger as per the go standard log package
-	writer           io.Writer // writer where the logs should be logged
-	failingCriticals bool      // flag setting if a critical log should result in a fatal entry (process exits)
-	startingLevel    uint      // the log level the logger should start in
-	levelFormats     [][]uint  // formats used for each of the log levels
+	loggerType       uint     // type of logger the options are for
+	dateFlags        int      // format flags for the logger as per the go standard log package
+	failingCriticals bool     // flag setting if a critical log should result in a fatal entry (process exits)
+	startingLevel    uint     // the log level the logger should start in
+	levelFormats     [][]uint // formats used for each of the log levels
 }
 
-// WithoutOptions is syntax-candy returning an Options object with default settings. When used, it implies that the
-// options object is not meant to be configured, but there is no restriction in doing so.
-func WithoutOptions() *Options {
-	return WithOptions()
-}
-
-// WithOptions is syntax-candy to create an Options object with default settings
-func WithOptions() *Options {
+// Standard creates an Options object for standard logging
+func Standard() *Options {
 	return &Options{
+		loggerType:       standard,
 		dateFlags:        0,
-		writer:           os.Stdout,
 		failingCriticals: false,
 		startingLevel:    WARNING,
 		levelFormats:     make([][]uint, TRACE+1),
@@ -61,12 +59,6 @@ func WithOptions() *Options {
 // DateFlags sets the format flags for the logger
 func (o *Options) DateFlags(flags int) *Options {
 	o.dateFlags = flags
-	return o
-}
-
-// WithWriter defines the writer the logger should use
-func (o *Options) WithWriter(writer io.Writer) *Options {
-	o.writer = writer
 	return o
 }
 
@@ -131,5 +123,5 @@ func (o *Options) WithLevels(levels uint) *Options {
 
 // equals compares if the options object is an exact match to another options object
 func (o *Options) equals(options *Options) bool {
-	return o.failingCriticals == options.failingCriticals && o.dateFlags == options.dateFlags && o.startingLevel == options.startingLevel && o.writer == options.writer
+	return o.failingCriticals == options.failingCriticals && o.dateFlags == options.dateFlags && o.startingLevel == options.startingLevel
 }

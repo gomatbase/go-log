@@ -22,7 +22,7 @@ func TestGettingLog(t *testing.T) {
 	})
 
 	t.Run("Test getting existing log with same options", func(t *testing.T) {
-		overrideLog, e := GetWithOptions("Test Override", WithoutOptions())
+		overrideLog, e := GetWithOptions("Test Override", Standard())
 		if e != nil {
 			t.Error("Getting log with same options should not fail.")
 		}
@@ -32,9 +32,9 @@ func TestGettingLog(t *testing.T) {
 	})
 
 	t.Run("Test getting existing log with new options", func(t *testing.T) {
-		overrideLog, e := GetWithOptions("Test Override", WithOptions().WithFailingCriticals())
-		if e == nil {
-			t.Error("Getting log with new options should fail.")
+		overrideLog, e := GetWithOptions("Test Override", Standard().WithFailingCriticals())
+		if e != nil {
+			t.Error("Getting log with new options should not fail.")
 		}
 		if overrideLog != log {
 			t.Error("Getting log with new options failing but returning a new log.")
@@ -50,59 +50,6 @@ func TestGettingLog(t *testing.T) {
 			t.Error("Nil options for non-exiting log should still result in a new logger.")
 		} else if overrideLog.Level() != WARNING {
 			t.Error("Default logger level WARNING is not set for nil options.")
-		}
-	})
-
-	t.Run("Test overriding non-existing log", func(t *testing.T) {
-		overrideLog, e := OverrideLogWithOptions("Another Test Override", WithoutOptions())
-		if e == nil {
-			t.Error("Overriding nonexistent log should fail.")
-		}
-		if overrideLog != nil {
-			t.Error("Overriding nonexistent log should not return one.")
-		}
-	})
-
-	t.Run("Test overriding existing log with same options", func(t *testing.T) {
-		options := WithoutOptions()
-		logWriter := log.(*logger).log
-		overrideLog, e := OverrideLogWithOptions("Test Override", options)
-		if e != nil {
-			t.Error("Overriding existing log with same options should not fail.")
-		}
-		if overrideLog != log {
-			t.Error("Overriding log options with same options should return the same log.")
-		}
-		if options == log.(*logger).options {
-			t.Error("Overriding log options with same options should not change the options.")
-		}
-		if logWriter != log.(*logger).log {
-			t.Error("Overriding log options with same options should not affect the log writer.")
-		}
-	})
-
-	t.Run("Test overriding existing log with new options", func(t *testing.T) {
-		options := WithOptions().WithStartingLevel(TRACE)
-		logWriter := log.(*logger).log
-		overrideLog, e := OverrideLogWithOptions("Test Override", options)
-		if e != nil {
-			t.Error("Overriding existing log with new options should not fail.")
-		}
-		if overrideLog != log {
-			t.Error("Overriding log options with new options should return the same (updated) log.")
-		}
-		if options != log.(*logger).options {
-			t.Error("Overriding log options with new options should update the options.")
-		}
-		if logWriter == log.(*logger).log {
-			t.Error("Overriding log options with new options should update the log writer.")
-		}
-		if log.Level() != TRACE {
-			t.Error("Overriding log level should update current log level")
-		}
-		log, e = Get("Test Override")
-		if e != nil {
-			t.Error("Getting log with non-default options should not raise an error:", e)
 		}
 	})
 }
@@ -186,8 +133,8 @@ func TestSettingLogLevels(t *testing.T) {
 
 func TestGettingLogLevels(t *testing.T) {
 	resetLoggers()
-	_, _ = GetWithOptions("LOG1", WithOptions().WithStartingLevel(DEBUG).WithoutFailingCriticals())
-	_, _ = GetWithOptions("LOG2", WithOptions().WithStartingLevel(TRACE+1))
+	_, _ = GetWithOptions("LOG1", Standard().WithStartingLevel(DEBUG).WithoutFailingCriticals())
+	_, _ = GetWithOptions("LOG2", Standard().WithStartingLevel(TRACE+1))
 
 	t.Run("Test getting logger log levels", func(t *testing.T) {
 		loggerLevels := LoggerLevels()

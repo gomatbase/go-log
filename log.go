@@ -5,8 +5,6 @@
 package log
 
 import (
-	"errors"
-	l "log"
 	"sync"
 )
 
@@ -26,9 +24,9 @@ const DEFAULT = "DEFAULT"
 var levelNames = []string{"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
 
 var (
-	loggers          = make(map[string]*logger)                  // map of all existing loggers. Indexed by their names.
-	lock             = sync.Mutex{}                              // mutex to manipulate the loggers map
-	defaultLogger, _ = getWithOptions(DEFAULT, WithoutOptions()) // the default logger provided by the package for out-of-the-box usage with default options.
+	loggers          = make(map[string]Logger)             // map of all existing loggers. Indexed by their names.
+	lock             = sync.Mutex{}                        // mutex to manipulate the loggers map
+	defaultLogger, _ = getWithOptions(DEFAULT, Standard()) // the default logger provided by the package for out-of-the-box usage with default options.
 )
 
 // Logger defines the interface a Logger implementation must provide
@@ -87,7 +85,7 @@ type Logger interface {
 // the default options (warning level, logs to stdout and non-failing criticals). The name must be a non-empty string
 // (may be spaces).
 func Get(name string) (Logger, error) {
-	logger, e := GetWithOptions(name, WithoutOptions())
+	logger, e := GetWithOptions(name, Standard())
 	var returnError error
 	if e != nil && e != ErrReinitializingExistingLogger {
 		returnError = e
@@ -107,62 +105,50 @@ func GetWithOptions(name string, options *Options) (Logger, error) {
 
 // private getWithOptions function that actually fetches or creates the logger. The internal version allows an empty
 // string as a name allowing the creation of the DEFAULT logger.
-func getWithOptions(name string, options *Options) (*logger, error) {
+func getWithOptions(name string, options *Options) (Logger, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	logger, found := loggers[name]
-	var e error
-	if !found {
-		loggers[name] = newLogger(name, options)
-		logger = loggers[name]
-	} else if !logger.options.equals(options) {
-		e = ErrReinitializingExistingLogger
+	if logger, found := loggers[name]; !found {
+		if logger, e := newLogger(name, options); e != nil {
+			return nil, e
+		} else {
+			loggers[name] = logger
+			return logger, nil
+		}
+	} else {
+		return logger, nil
 	}
-
-	return logger, e
 }
 
-// OverrideLogWithOptions allows resetting the options of an existing logger. The function is provided for convenience
-// and allows changing the options of the default logger. It is not thread-safe and aside the use to set the options
-// for the default logger it shouldn't be used
-func OverrideLogWithOptions(name string, options *Options) (Logger, error) {
+// SetDefaultLogger allows overriding the default logger with different options
+func SetDefaultLogger(options *Options) (Logger, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	logger, found := loggers[name]
-	if !found {
-		return nil, errors.New("log doesn't exist")
-	} else if !logger.options.equals(options) {
-		logger.log = l.New(options.writer, logger.name+" - ", options.dateFlags)
-		logger.level = options.startingLevel
-		logger.criticalFailure = options.failingCriticals
-		logger.options = options
+	if logger, e := newLogger(DEFAULT, options); e != nil {
+		return nil, e
+	} else {
+		defaultLogger = logger
+		loggers[DEFAULT] = logger
 	}
 
-	return logger, nil
+	return defaultLogger, nil
 }
 
 // newLogger creates a new logger with the given name from the provided options
-func newLogger(name string, options *Options) *logger {
+func newLogger(name string, options *Options) (Logger, error) {
 	o := options
 	if o == nil {
-		o = WithOptions()
+		o = Standard()
 	}
 
-	prefix := ""
-	if name != DEFAULT {
-		prefix = name + " - "
+	switch o.loggerType {
+	case standard:
+		return newStandardLogger(name, o), nil
+	default:
+		return nil, ErrUnknownLoggerType
 	}
-	logger := logger{
-		options:         o,
-		level:           o.startingLevel,
-		name:            name,
-		log:             l.New(o.writer, prefix, o.dateFlags),
-		criticalFailure: o.failingCriticals,
-	}
-
-	return &logger
 }
 
 // SetLevel sets the log level of the default logger
@@ -207,7 +193,7 @@ func LoggerLevels() map[string]uint {
 	loggerLevels := make(map[string]uint)
 	lock.Lock()
 	for k, l := range loggers {
-		loggerLevels[k] = l.level
+		loggerLevels[k] = l.Level()
 	}
 	lock.Unlock()
 	return loggerLevels
@@ -224,7 +210,7 @@ func LoggerLevel(name string) (uint, error) {
 		return 0, ErrLoggerDoesNotExist
 	}
 
-	return logger.level, nil
+	return logger.Level(), nil
 }
 
 // LoggerLevelName gets the current log level name of the logger with the given name. ErrLoggerDoesNotExist is returned as an
@@ -268,60 +254,60 @@ func Criticalf(format string, v ...interface{}) {
 
 // Error logs a error log entry through the default logger
 func Error(v ...interface{}) {
-	defaultLogger.println(ERROR, v...)
+	defaultLogger.Println(ERROR, v...)
 }
 
 // Errorf logs a formatted error log entry through the default logger
 func Errorf(format string, v ...interface{}) {
-	defaultLogger.printf(ERROR, format, v...)
+	defaultLogger.Printf(ERROR, format, v...)
 }
 
 // Warning logs a warning log entry through the default logger
 func Warning(v ...interface{}) {
-	defaultLogger.println(WARNING, v...)
+	defaultLogger.Println(WARNING, v...)
 }
 
 // Warningf logs a formatted warning log entry through the default logger
 func Warningf(format string, v ...interface{}) {
-	defaultLogger.printf(WARNING, format, v...)
+	defaultLogger.Printf(WARNING, format, v...)
 }
 
 // Info logs a info log entry through the default logger
 func Info(v ...interface{}) {
-	defaultLogger.println(INFO, v...)
+	defaultLogger.Println(INFO, v...)
 }
 
 // Infof logs a formatted info log entry through the default logger
 func Infof(format string, v ...interface{}) {
-	defaultLogger.printf(INFO, format, v...)
+	defaultLogger.Printf(INFO, format, v...)
 }
 
 // Debug logs a debug log entry through the default logger
 func Debug(v ...interface{}) {
-	defaultLogger.println(DEBUG, v...)
+	defaultLogger.Println(DEBUG, v...)
 }
 
 // Debugf logs a formatted debug log entry through the default logger
 func Debugf(format string, v ...interface{}) {
-	defaultLogger.printf(DEBUG, format, v...)
+	defaultLogger.Printf(DEBUG, format, v...)
 }
 
 // Trace logs a trace log entry through the default logger
 func Trace(v ...interface{}) {
-	defaultLogger.println(TRACE, v...)
+	defaultLogger.Println(TRACE, v...)
 }
 
 // Tracef logs a formatted trace log entry through the default logger
 func Tracef(format string, v ...interface{}) {
-	defaultLogger.printf(TRACE, format, v...)
+	defaultLogger.Printf(TRACE, format, v...)
 }
 
 // Println logs a log entry at the given log level  through the default logger
 func Println(level uint, v ...interface{}) {
-	defaultLogger.println(level, v...)
+	defaultLogger.Println(level, v...)
 }
 
 // Printf logs a formatted log entry at the given log level through the default logger
 func Printf(level uint, format string, v ...interface{}) {
-	defaultLogger.printf(level, format, v...)
+	defaultLogger.Printf(level, format, v...)
 }
