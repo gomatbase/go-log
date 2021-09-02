@@ -58,6 +58,10 @@ type StandardWriter interface {
 	WithWriter(writer io.Writer) Options
 }
 
+type AppendersLogger interface {
+	Options
+}
+
 // options holds the configuration for a new logger and provides methods to setup the configurable options
 type options struct {
 	loggerType       uint      // type of logger the options are for
@@ -76,6 +80,14 @@ func Standard() StandardWriter {
 		failingCriticals: false,
 		startingLevel:    WARNING,
 		levelFormats:     make([][]uint, TRACE+1),
+	}
+}
+
+func SyncedAppenders() AppendersLogger {
+	return &options{
+		loggerType:       syncedAppender,
+		failingCriticals: false,
+		startingLevel:    WARNING,
 	}
 }
 

@@ -96,6 +96,8 @@ func newLogger(name string, o *options) (Logger, error) {
 	switch o.loggerType {
 	case standard:
 		return newStandardLogger(name, o), nil
+	case syncedAppender:
+		return newStandardLogger(name, o), nil
 	default:
 		return nil, ErrUnknownLoggerType
 	}
