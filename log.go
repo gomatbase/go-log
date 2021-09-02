@@ -8,8 +8,10 @@ import (
 	"sync"
 )
 
+// severity type
 type severity int
 
+// Log Severity levels
 const (
 	CRITICAL = severity(0) // Critical log level (Always logged)
 	ERROR    = severity(1) // Error log level
@@ -30,58 +32,6 @@ var (
 	lock             = sync.Mutex{}                        // mutex to manipulate the loggers map
 	defaultLogger, _ = getWithOptions(DEFAULT, Standard()) // the default logger provided by the package for out-of-the-box usage with default options.
 )
-
-// Logger defines the interface a Logger implementation must provide
-type Logger interface {
-
-	// SetLevel sets the current log level of the logger
-	SetLevel(severity)
-
-	// Level returns the current log level of the logger
-	Level() severity
-
-	// Critical logs the message(s) at the critical level
-	Critical(v ...interface{})
-
-	// Criticalf logs the formated message at the critical level
-	Criticalf(format string, v ...interface{})
-
-	// Error logs the message(s) at the error level
-	Error(v ...interface{})
-
-	// Errorf logs the formated message at the error level
-	Errorf(format string, v ...interface{})
-
-	// Warning logs the message(s) at the warning level
-	Warning(v ...interface{})
-
-	// Warningf logs the formated message at the warning level
-	Warningf(format string, v ...interface{})
-
-	// Info logs the message(s) at the info level
-	Info(v ...interface{})
-
-	// Infof logs the formated message at the info level
-	Infof(format string, v ...interface{})
-
-	// Debug logs the message(s) at the debug level
-	Debug(v ...interface{})
-
-	// Debugf logs the formated message at the debug level
-	Debugf(format string, v ...interface{})
-
-	// Trace logs the message(s) at the trace level
-	Trace(v ...interface{})
-
-	// Tracef logs the formated message at the trace level
-	Tracef(format string, v ...interface{})
-
-	// println logs the message(s) at the provided level
-	println(level severity, v ...interface{})
-
-	// printf logs the formated message at the provided level
-	printf(level severity, format string, v ...interface{})
-}
 
 // Get will create or get an existing logger with the given name. If the logger doesn't exist it will be created with
 // the default options (warning level, logs to stdout and non-failing criticals). The name must be a non-empty string
