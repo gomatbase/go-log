@@ -244,12 +244,12 @@ func LevelName(level severity) string {
 
 // Critical logs a critical log entry through the default logger
 func Critical(v ...interface{}) {
-	defaultLogger.Critical(v...)
+	defaultLogger.println(CRITICAL, v...)
 }
 
 // Criticalf logs a formatted critical log entry through the default logger
 func Criticalf(format string, v ...interface{}) {
-	defaultLogger.Criticalf(format, v...)
+	defaultLogger.printf(CRITICAL, format, v...)
 }
 
 // Error logs a error log entry through the default logger

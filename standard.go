@@ -23,7 +23,7 @@ type headerFormat struct {
 	format    []uint
 }
 
-// logger Simple implementation of a Logger, using the standard go log as the actual logging framework
+// logger Simple implementation writing to an ioWriter as output.
 type standardLogger struct {
 	options         *options // the original options used to create the logger
 	level           severity // the current log level

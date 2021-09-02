@@ -216,7 +216,22 @@ func ExampleCriticalf() {
 	// CRT
 }
 
-func ExampleCustomLoggerTrace() {
+func ExampleDefaultLoggerWithPattern() {
+	SetDefaultLogger(Standard().WithLogPrefix(Name, Source, Separator).WithStartingLevel(ERROR))
+
+	Criticalf("%v", "CRT")
+	Errorf("%v", "ERR")
+	Warningf("%v", "WRN")
+	Infof("%v", "INF")
+	Debugf("%v", "DBG")
+	Tracef("%v", "TRC")
+
+	// Output:
+	// DEFAULT example_test.go:222 - CRT
+	// DEFAULT example_test.go:223 - ERR
+}
+
+func ExampleStandardLoggerTrace() {
 	logger, _ := GetWithOptions("TRC", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(TRACE)
 
@@ -236,7 +251,7 @@ func ExampleCustomLoggerTrace() {
 	// TRC - TRC
 }
 
-func ExampleCustomLoggerDebug() {
+func ExampleStandardLoggerDebug() {
 	logger, _ := GetWithOptions("DBG", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(DEBUG)
 
@@ -255,7 +270,7 @@ func ExampleCustomLoggerDebug() {
 	// DBG - DBG
 }
 
-func ExampleCustomLoggerInfo() {
+func ExampleStandardLoggerInfo() {
 	logger, _ := GetWithOptions("INF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(INFO)
 
@@ -273,7 +288,7 @@ func ExampleCustomLoggerInfo() {
 	// INF - INF
 }
 
-func ExampleCustomLoggerWarning() {
+func ExampleStandardLoggerWarning() {
 	logger, _ := GetWithOptions("WRN", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(WARNING)
 
@@ -290,7 +305,7 @@ func ExampleCustomLoggerWarning() {
 	// WRN - WRN
 }
 
-func ExampleCustomLoggerError() {
+func ExampleStandardLoggerError() {
 	logger, _ := GetWithOptions("ERR", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(ERROR)
 
@@ -306,7 +321,7 @@ func ExampleCustomLoggerError() {
 	// ERR - ERR
 }
 
-func ExampleCustomLoggerCritical() {
+func ExampleStandardLoggerCritical() {
 	logger, _ := GetWithOptions("CRT", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(CRITICAL)
 
@@ -321,7 +336,7 @@ func ExampleCustomLoggerCritical() {
 	// CRT - CRT
 }
 
-func ExampleCustomLoggerTracef() {
+func ExampleStandardLoggerTracef() {
 	logger, _ := GetWithOptions("TRCF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(TRACE)
 
@@ -341,7 +356,7 @@ func ExampleCustomLoggerTracef() {
 	// TRCF - TRC
 }
 
-func ExampleCustomLoggerDebugf() {
+func ExampleStandardLoggerDebugf() {
 	logger, _ := GetWithOptions("DBGF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(DEBUG)
 
@@ -360,7 +375,7 @@ func ExampleCustomLoggerDebugf() {
 	// DBGF - DBG
 }
 
-func ExampleCustomLoggerInfof() {
+func ExampleStandardLoggerInfof() {
 	logger, _ := GetWithOptions("INFF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(INFO)
 
@@ -378,7 +393,7 @@ func ExampleCustomLoggerInfof() {
 	// INFF - INF
 }
 
-func ExampleCustomLoggerWarningf() {
+func ExampleStandardLoggerWarningf() {
 	logger, _ := GetWithOptions("WRNF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(WARNING)
 
@@ -395,7 +410,7 @@ func ExampleCustomLoggerWarningf() {
 	// WRNF - WRN
 }
 
-func ExampleCustomLoggerErrorf() {
+func ExampleStandardLoggerErrorf() {
 	logger, _ := GetWithOptions("ERRF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(ERROR)
 
@@ -411,7 +426,7 @@ func ExampleCustomLoggerErrorf() {
 	// ERRF - ERR
 }
 
-func ExampleCustomLoggerCriticalf() {
+func ExampleStandardLoggerCriticalf() {
 	logger, _ := GetWithOptions("CRTF", Standard().WithLogPrefix(Name, Separator))
 	logger.SetLevel(CRITICAL)
 
@@ -426,7 +441,7 @@ func ExampleCustomLoggerCriticalf() {
 	// CRTF - CRT
 }
 
-func ExampleCustomLoggerWithPattern() {
+func ExampleStandardLoggerWithPattern() {
 	logger, _ := GetWithOptions("PATTERN", Standard().WithLogPrefix(Name, Source, Separator))
 	logger.SetLevel(ERROR)
 
@@ -438,6 +453,6 @@ func ExampleCustomLoggerWithPattern() {
 	logger.Tracef("%v", "TRC")
 
 	// Output:
-	// PATTERN example_test.go:433 - CRT
-	// PATTERN example_test.go:434 - ERR
+	// PATTERN example_test.go:448 - CRT
+	// PATTERN example_test.go:449 - ERR
 }
