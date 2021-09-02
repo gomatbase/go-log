@@ -66,17 +66,11 @@ func (logger *standardLogger) Level() severity {
 }
 
 func (logger *standardLogger) Critical(v ...interface{}) {
-	logger.output(0, 2, fmt.Sprintln(v...))
-	if logger.criticalFailure {
-		panic("critical failure")
-	}
+	logger.println(CRITICAL, v...)
 }
 
 func (logger *standardLogger) Criticalf(format string, v ...interface{}) {
-	logger.output(0, 2, fmt.Sprintf(format, v...))
-	if logger.criticalFailure {
-		panic("critical failure")
-	}
+	logger.printf(CRITICAL, format, v...)
 }
 
 func (logger *standardLogger) Error(v ...interface{}) {
@@ -123,11 +117,17 @@ func (logger *standardLogger) println(level severity, v ...interface{}) {
 	if level <= logger.level {
 		logger.output(level, 3, fmt.Sprintln(v...))
 	}
+	if level == 0 && logger.criticalFailure {
+		panic("critical failure")
+	}
 }
 
 func (logger *standardLogger) printf(level severity, format string, v ...interface{}) {
 	if level <= logger.level {
 		logger.output(level, 3, fmt.Sprintf(format, v...))
+	}
+	if level == 0 && logger.criticalFailure {
+		panic("critical failure")
 	}
 }
 
