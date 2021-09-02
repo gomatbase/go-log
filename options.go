@@ -43,16 +43,13 @@ type Options interface {
 	WithoutFailingCriticals() Options
 
 	// WithStartingLevel sets the initial log level the logger has
-	WithStartingLevel(startingLevel uint) Options
+	WithStartingLevel(startingLevel severity) Options
 
 	// WithLevelLogPrefix sets the log prefix format for a specific level
-	WithLevelLogPrefix(logLevel uint, flags ...uint) Options
+	WithLevelLogPrefix(logLevel severity, flags ...uint) Options
 
 	// WithLogPrefix sets the log prefix format for all levels
 	WithLogPrefix(flags ...uint) Options
-
-	// WithLevels set the total number of log levels. Cannot be less than TRACE level.
-	WithLevels(levels uint) Options
 }
 
 type StandardWriter interface {
@@ -65,7 +62,7 @@ type options struct {
 	loggerType       uint      // type of logger the options are for
 	dateFlags        int       // format flags for the logger as per the go standard log package
 	failingCriticals bool      // flag setting if a critical log should result in a fatal entry (process exits)
-	startingLevel    uint      // the log level the logger should start in
+	startingLevel    severity  // the log level the logger should start in
 	levelFormats     [][]uint  // formats used for each of the log levels
 	writer           io.Writer // writer that should be used for a standard writer logger
 }
@@ -106,7 +103,7 @@ func (o *options) WithoutFailingCriticals() Options {
 }
 
 // WithStartingLevel sets the initial log level the logger has
-func (o *options) WithStartingLevel(startingLevel uint) Options {
+func (o *options) WithStartingLevel(startingLevel severity) Options {
 	o.startingLevel = startingLevel
 	return o
 }
@@ -124,7 +121,7 @@ func validatePrefixFlags(flags []uint) {
 }
 
 // WithLevelLogPrefix sets the log prefix format for a specific level
-func (o *options) WithLevelLogPrefix(logLevel uint, flags ...uint) Options {
+func (o *options) WithLevelLogPrefix(logLevel severity, flags ...uint) Options {
 	validatePrefixFlags(flags)
 	if int(logLevel) >= len(o.levelFormats) {
 		for i := len(o.levelFormats); i <= int(logLevel); i++ {
@@ -142,14 +139,6 @@ func (o *options) WithLogPrefix(flags ...uint) Options {
 		o.levelFormats[i] = flags
 	}
 	return o
-}
-
-// WithLevels set the total number of log levels. Cannot be less than TRACE level.
-func (o *options) WithLevels(levels uint) Options {
-	if levels <= TRACE {
-		panic("must not set less log levels than default TRACE level")
-	}
-	return o.WithLevelLogPrefix(levels)
 }
 
 // equals compares if the options object is an exact match to another options object

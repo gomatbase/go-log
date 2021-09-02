@@ -26,7 +26,7 @@ type headerFormat struct {
 // logger Simple implementation of a Logger, using the standard go log as the actual logging framework
 type standardLogger struct {
 	options         *options // the original options used to create the logger
-	level           uint     // the current log level
+	level           severity // the current log level
 	name            string
 	writer          io.Writer
 	buffer          []byte
@@ -57,11 +57,11 @@ func newStandardLogger(name string, options *options) Logger {
 }
 
 // SetLevel sets the level of the logger
-func (logger *standardLogger) SetLevel(level uint) {
+func (logger *standardLogger) SetLevel(level severity) {
 	logger.level = level
 }
 
-func (logger *standardLogger) Level() uint {
+func (logger *standardLogger) Level() severity {
 	return logger.level
 }
 
@@ -119,27 +119,19 @@ func (logger *standardLogger) Tracef(format string, v ...interface{}) {
 	logger.printf(TRACE, format, v...)
 }
 
-func (logger *standardLogger) Println(level uint, v ...interface{}) {
-	logger.println(level, v...)
-}
-
-func (logger *standardLogger) Printf(level uint, format string, v ...interface{}) {
-	logger.printf(level, format, v...)
-}
-
-func (logger *standardLogger) println(level uint, v ...interface{}) {
+func (logger *standardLogger) println(level severity, v ...interface{}) {
 	if level <= logger.level {
 		logger.output(level, 3, fmt.Sprintln(v...))
 	}
 }
 
-func (logger *standardLogger) printf(level uint, format string, v ...interface{}) {
+func (logger *standardLogger) printf(level severity, format string, v ...interface{}) {
 	if level <= logger.level {
 		logger.output(level, 3, fmt.Sprintf(format, v...))
 	}
 }
 
-func (logger *standardLogger) output(level uint, callDepth int, s string) error {
+func (logger *standardLogger) output(level severity, callDepth int, s string) error {
 	logger.mutex.Lock()
 	defer logger.mutex.Unlock()
 	if level > logger.level {
@@ -222,7 +214,7 @@ func sourcetobuf(buf *[]byte, source string, line int) {
 	itoa(buf, line, 0)
 }
 
-func (logger *standardLogger) formatHeader(buf *[]byte, level uint, t time.Time, file string, line int, format []uint) {
+func (logger *standardLogger) formatHeader(buf *[]byte, level severity, t time.Time, file string, line int, format []uint) {
 	for _, f := range format {
 		switch f {
 		case Separator:

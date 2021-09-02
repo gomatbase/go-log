@@ -8,13 +8,15 @@ import (
 	"sync"
 )
 
+type severity int
+
 const (
-	CRITICAL = iota // Critical log level (Always logged)
-	ERROR           // Error log level
-	WARNING         // Warning log level (Default level)
-	INFO            // Info log level
-	DEBUG           // Debug log level
-	TRACE           // Trace log level
+	CRITICAL = severity(0) // Critical log level (Always logged)
+	ERROR    = severity(1) // Error log level
+	WARNING  = severity(2) // Warning log level (Default level)
+	INFO     = severity(3) // Info log level
+	DEBUG    = severity(4) // Debug log level
+	TRACE    = severity(5) // Trace log level
 )
 
 // DEFAULT is the name of the default logger
@@ -33,10 +35,10 @@ var (
 type Logger interface {
 
 	// SetLevel sets the current log level of the logger
-	SetLevel(uint)
+	SetLevel(severity)
 
 	// Level returns the current log level of the logger
-	Level() uint
+	Level() severity
 
 	// Critical logs the message(s) at the critical level
 	Critical(v ...interface{})
@@ -74,11 +76,11 @@ type Logger interface {
 	// Tracef logs the formated message at the trace level
 	Tracef(format string, v ...interface{})
 
-	// Println logs the message(s) at the provided level
-	Println(level uint, v ...interface{})
+	// println logs the message(s) at the provided level
+	println(level severity, v ...interface{})
 
-	// Printf logs the formated message at the provided level
-	Printf(level uint, format string, v ...interface{})
+	// printf logs the formated message at the provided level
+	printf(level severity, format string, v ...interface{})
 }
 
 // Get will create or get an existing logger with the given name. If the logger doesn't exist it will be created with
@@ -150,12 +152,12 @@ func newLogger(name string, o *options) (Logger, error) {
 }
 
 // SetLevel sets the log level of the default logger
-func SetLevel(level uint) {
+func SetLevel(level severity) {
 	defaultLogger.SetLevel(level)
 }
 
 // SetLoggerLevel sets the log level of a logger by name. DEFAULT may be used to set the default logger level.
-func SetLoggerLevel(name string, level uint) error {
+func SetLoggerLevel(name string, level severity) error {
 	lock.Lock()
 	logger, found := loggers[name]
 	lock.Unlock()
@@ -169,8 +171,8 @@ func SetLoggerLevel(name string, level uint) error {
 }
 
 // SetLoggerLevels sets the log levels of several loggers at once. If any logger is not found it will be omitted from the response
-func SetLoggerLevels(loggerLevels map[string]uint) map[string]uint {
-	result := make(map[string]uint)
+func SetLoggerLevels(loggerLevels map[string]severity) map[string]severity {
+	result := make(map[string]severity)
 
 	for k, l := range loggerLevels {
 		if e := SetLoggerLevel(k, l); e == nil {
@@ -182,13 +184,13 @@ func SetLoggerLevels(loggerLevels map[string]uint) map[string]uint {
 }
 
 // Level returns the current log level of the default logger
-func Level() uint {
+func Level() severity {
 	return defaultLogger.Level()
 }
 
 // LoggerLevels gets the current log levels of all known loggers
-func LoggerLevels() map[string]uint {
-	loggerLevels := make(map[string]uint)
+func LoggerLevels() map[string]severity {
+	loggerLevels := make(map[string]severity)
 	lock.Lock()
 	for k, l := range loggers {
 		loggerLevels[k] = l.Level()
@@ -199,7 +201,7 @@ func LoggerLevels() map[string]uint {
 
 // LoggerLevel gets the current log level of the logger with the given name. ErrLoggerDoesNotExist is returned as an
 // error if a logger with the given name doesn't is unknown.
-func LoggerLevel(name string) (uint, error) {
+func LoggerLevel(name string) (severity, error) {
 	lock.Lock()
 	logger, found := loggers[name]
 	lock.Unlock()
@@ -233,7 +235,7 @@ func LoggerLevelNames() map[string]string {
 
 // LevelName is a convenience method to translate the log level into a name. It only works for loggers implementing
 // the default severity scale.
-func LevelName(level uint) string {
+func LevelName(level severity) string {
 	if int(level) >= len(levelNames) {
 		return "UNKNOWN"
 	}
@@ -252,60 +254,50 @@ func Criticalf(format string, v ...interface{}) {
 
 // Error logs a error log entry through the default logger
 func Error(v ...interface{}) {
-	defaultLogger.Println(ERROR, v...)
+	defaultLogger.println(ERROR, v...)
 }
 
 // Errorf logs a formatted error log entry through the default logger
 func Errorf(format string, v ...interface{}) {
-	defaultLogger.Printf(ERROR, format, v...)
+	defaultLogger.printf(ERROR, format, v...)
 }
 
 // Warning logs a warning log entry through the default logger
 func Warning(v ...interface{}) {
-	defaultLogger.Println(WARNING, v...)
+	defaultLogger.println(WARNING, v...)
 }
 
 // Warningf logs a formatted warning log entry through the default logger
 func Warningf(format string, v ...interface{}) {
-	defaultLogger.Printf(WARNING, format, v...)
+	defaultLogger.printf(WARNING, format, v...)
 }
 
 // Info logs a info log entry through the default logger
 func Info(v ...interface{}) {
-	defaultLogger.Println(INFO, v...)
+	defaultLogger.println(INFO, v...)
 }
 
 // Infof logs a formatted info log entry through the default logger
 func Infof(format string, v ...interface{}) {
-	defaultLogger.Printf(INFO, format, v...)
+	defaultLogger.printf(INFO, format, v...)
 }
 
 // Debug logs a debug log entry through the default logger
 func Debug(v ...interface{}) {
-	defaultLogger.Println(DEBUG, v...)
+	defaultLogger.println(DEBUG, v...)
 }
 
 // Debugf logs a formatted debug log entry through the default logger
 func Debugf(format string, v ...interface{}) {
-	defaultLogger.Printf(DEBUG, format, v...)
+	defaultLogger.printf(DEBUG, format, v...)
 }
 
 // Trace logs a trace log entry through the default logger
 func Trace(v ...interface{}) {
-	defaultLogger.Println(TRACE, v...)
+	defaultLogger.println(TRACE, v...)
 }
 
 // Tracef logs a formatted trace log entry through the default logger
 func Tracef(format string, v ...interface{}) {
-	defaultLogger.Printf(TRACE, format, v...)
-}
-
-// Println logs a log entry at the given log level  through the default logger
-func Println(level uint, v ...interface{}) {
-	defaultLogger.Println(level, v...)
-}
-
-// Printf logs a formatted log entry at the given log level through the default logger
-func Printf(level uint, format string, v ...interface{}) {
-	defaultLogger.Printf(level, format, v...)
+	defaultLogger.printf(TRACE, format, v...)
 }

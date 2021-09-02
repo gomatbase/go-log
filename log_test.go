@@ -56,7 +56,7 @@ func TestGettingLog(t *testing.T) {
 
 func TestLevelNames(t *testing.T) {
 	for i, name := range levelNames {
-		if returnedName := LevelName(uint(i)); returnedName != name {
+		if returnedName := LevelName(severity(i)); returnedName != name {
 			t.Errorf("Unexpected level name for level %d: (expected %v, got %v)", i, name, returnedName)
 		}
 	}
@@ -109,7 +109,7 @@ func TestSettingLogLevels(t *testing.T) {
 
 	t.Run("Test setting logger log level", func(t *testing.T) {
 		loggerName := "LOG-LEVEL-LOG"
-		logLevels := make(map[string]uint)
+		logLevels := make(map[string]severity)
 		logLevels[DEFAULT] = DEBUG
 		logLevels[loggerName] = CRITICAL
 		logLevels["NON-EXISTING"] = ERROR
