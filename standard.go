@@ -68,14 +68,14 @@ func (logger *standardLogger) Level() severity {
 func (logger *standardLogger) Critical(v ...interface{}) {
 	logger.output(0, 2, fmt.Sprintln(v...))
 	if logger.criticalFailure {
-		os.Exit(1)
+		panic("critical failure")
 	}
 }
 
 func (logger *standardLogger) Criticalf(format string, v ...interface{}) {
 	logger.output(0, 2, fmt.Sprintf(format, v...))
 	if logger.criticalFailure {
-		os.Exit(1)
+		panic("critical failure")
 	}
 }
 
