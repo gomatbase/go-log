@@ -96,7 +96,7 @@ func Get(name string) (Logger, error) {
 // GetWithOptions will create a log with the provided options if it doesn't exist yet or returns an existing log if
 // the provided options are the same as the options the existing logger was created with. Trying to get an existing
 // logger with different options. The name logger may not be an empty string (can be filled spaces).
-func GetWithOptions(name string, options *Options) (Logger, error) {
+func GetWithOptions(name string, options Options) (Logger, error) {
 	if len(name) == 0 {
 		return nil, ErrEmptyLoggerName
 	}
@@ -105,12 +105,15 @@ func GetWithOptions(name string, options *Options) (Logger, error) {
 
 // private getWithOptions function that actually fetches or creates the logger. The internal version allows an empty
 // string as a name allowing the creation of the DEFAULT logger.
-func getWithOptions(name string, options *Options) (Logger, error) {
+func getWithOptions(name string, o Options) (Logger, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
 	if logger, found := loggers[name]; !found {
-		if logger, e := newLogger(name, options); e != nil {
+		if o == nil {
+			o = Standard()
+		}
+		if logger, e := newLogger(name, o.(*options)); e != nil {
 			return nil, e
 		} else {
 			loggers[name] = logger
@@ -122,11 +125,11 @@ func getWithOptions(name string, options *Options) (Logger, error) {
 }
 
 // SetDefaultLogger allows overriding the default logger with different options
-func SetDefaultLogger(options *Options) (Logger, error) {
+func SetDefaultLogger(o Options) (Logger, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	if logger, e := newLogger(DEFAULT, options); e != nil {
+	if logger, e := newLogger(DEFAULT, o.(*options)); e != nil {
 		return nil, e
 	} else {
 		defaultLogger = logger
@@ -137,12 +140,7 @@ func SetDefaultLogger(options *Options) (Logger, error) {
 }
 
 // newLogger creates a new logger with the given name from the provided options
-func newLogger(name string, options *Options) (Logger, error) {
-	o := options
-	if o == nil {
-		o = Standard()
-	}
-
+func newLogger(name string, o *options) (Logger, error) {
 	switch o.loggerType {
 	case standard:
 		return newStandardLogger(name, o), nil

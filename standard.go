@@ -25,7 +25,7 @@ type headerFormat struct {
 
 // logger Simple implementation of a Logger, using the standard go log as the actual logging framework
 type standardLogger struct {
-	options         *Options // the original options used to create the logger
+	options         *options // the original options used to create the logger
 	level           uint     // the current log level
 	name            string
 	writer          io.Writer
@@ -35,7 +35,7 @@ type standardLogger struct {
 	criticalFailure bool
 }
 
-func newStandardLogger(name string, options *Options) Logger {
+func newStandardLogger(name string, options *options) Logger {
 	levelFormats := make([]headerFormat, len(options.levelFormats))
 	for i, levelFormat := range options.levelFormats {
 		levelFormats[i] = headerFormat{format: levelFormat}

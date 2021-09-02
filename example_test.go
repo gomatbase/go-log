@@ -6,7 +6,6 @@ package log
 
 import (
 	"bytes"
-	"os"
 )
 
 var buf = &bytes.Buffer{}
@@ -14,13 +13,12 @@ var buf = &bytes.Buffer{}
 func resetLoggers() {
 	buf.Reset()
 	loggers = make(map[string]Logger)
-	defaultLogger, _ = newLogger(DEFAULT, Standard())
-	defaultLogger.(*standardLogger).writer = buf
+	defaultLogger, _ = newLogger(DEFAULT, Standard().WithWriter(buf).(*options))
 	loggers[DEFAULT] = defaultLogger
 }
 
 func ExampleTrace() {
-	resetLoggers()
+	SetDefaultLogger(Standard())
 	SetLevel(TRACE)
 
 	Critical("CRT")
@@ -29,8 +27,6 @@ func ExampleTrace() {
 	Info("INF")
 	Debug("DBG")
 	Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -42,8 +38,7 @@ func ExampleTrace() {
 }
 
 func ExampleDebug() {
-	resetLoggers()
-	SetLevel(DEBUG)
+	SetDefaultLogger(Standard().WithStartingLevel(DEBUG))
 
 	Critical("CRT")
 	Error("ERR")
@@ -51,8 +46,6 @@ func ExampleDebug() {
 	Info("INF")
 	Debug("DBG")
 	Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -63,8 +56,7 @@ func ExampleDebug() {
 }
 
 func ExampleInfo() {
-	resetLoggers()
-	SetLevel(INFO)
+	SetDefaultLogger(Standard().WithStartingLevel(INFO))
 
 	Critical("CRT")
 	Error("ERR")
@@ -72,8 +64,6 @@ func ExampleInfo() {
 	Info("INF")
 	Debug("DBG")
 	Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -83,8 +73,7 @@ func ExampleInfo() {
 }
 
 func ExampleWarning() {
-	resetLoggers()
-	SetLevel(WARNING)
+	SetDefaultLogger(Standard())
 
 	Critical("CRT")
 	Error("ERR")
@@ -92,8 +81,6 @@ func ExampleWarning() {
 	Info("INF")
 	Debug("DBG")
 	Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -102,8 +89,7 @@ func ExampleWarning() {
 }
 
 func ExampleError() {
-	resetLoggers()
-	SetLevel(ERROR)
+	SetDefaultLogger(Standard().WithStartingLevel(ERROR))
 
 	Critical("CRT")
 	Error("ERR")
@@ -111,8 +97,6 @@ func ExampleError() {
 	Info("INF")
 	Debug("DBG")
 	Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -120,8 +104,7 @@ func ExampleError() {
 }
 
 func ExampleCritical() {
-	resetLoggers()
-	SetLevel(CRITICAL)
+	SetDefaultLogger(Standard().WithStartingLevel(CRITICAL))
 
 	Critical("CRT")
 	Error("ERR")
@@ -130,15 +113,12 @@ func ExampleCritical() {
 	Debug("DBG")
 	Trace("TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// CRT
 }
 
 func ExampleTracef() {
-	resetLoggers()
-	SetLevel(TRACE)
+	SetDefaultLogger(Standard().WithStartingLevel(TRACE))
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -146,8 +126,6 @@ func ExampleTracef() {
 	Infof("%v", "INF")
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -159,8 +137,7 @@ func ExampleTracef() {
 }
 
 func ExampleDebugf() {
-	resetLoggers()
-	SetLevel(DEBUG)
+	SetDefaultLogger(Standard().WithStartingLevel(DEBUG))
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -168,8 +145,6 @@ func ExampleDebugf() {
 	Infof("%v", "INF")
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -180,8 +155,7 @@ func ExampleDebugf() {
 }
 
 func ExampleInfof() {
-	resetLoggers()
-	SetLevel(INFO)
+	SetDefaultLogger(Standard().WithStartingLevel(INFO))
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -189,8 +163,6 @@ func ExampleInfof() {
 	Infof("%v", "INF")
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -200,8 +172,7 @@ func ExampleInfof() {
 }
 
 func ExampleWarningf() {
-	resetLoggers()
-	SetLevel(WARNING)
+	SetDefaultLogger(Standard())
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -209,8 +180,6 @@ func ExampleWarningf() {
 	Infof("%v", "INF")
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -219,8 +188,7 @@ func ExampleWarningf() {
 }
 
 func ExampleErrorf() {
-	resetLoggers()
-	SetLevel(ERROR)
+	SetDefaultLogger(Standard().WithStartingLevel(ERROR))
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -228,8 +196,6 @@ func ExampleErrorf() {
 	Infof("%v", "INF")
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -237,8 +203,7 @@ func ExampleErrorf() {
 }
 
 func ExampleCriticalf() {
-	resetLoggers()
-	SetLevel(CRITICAL)
+	SetDefaultLogger(Standard().WithStartingLevel(CRITICAL))
 
 	Criticalf("%v", "CRT")
 	Errorf("%v", "ERR")
@@ -247,16 +212,13 @@ func ExampleCriticalf() {
 	Debugf("%v", "DBG")
 	Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// CRT
 }
 
 func ExamplePrintln() {
 	resetLoggers()
-	defaultLogger, _ = newLogger(DEFAULT, Standard().WithLevels(TRACE+1).WithStartingLevel(TRACE+1))
-	defaultLogger.(*standardLogger).writer = buf
+	SetDefaultLogger(Standard().WithLevels(TRACE + 1).WithStartingLevel(TRACE + 1))
 
 	Println(CRITICAL, "CRT")
 	Println(ERROR, "ERR")
@@ -267,7 +229,7 @@ func ExamplePrintln() {
 	Println(TRACE+1, "CUSTOM")
 	Println(TRACE+2, "CUSTOM2")
 
-	os.Stdout.WriteString(buf.String())
+	// os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -281,8 +243,7 @@ func ExamplePrintln() {
 
 func ExamplePrintf() {
 	resetLoggers()
-	defaultLogger, _ = newLogger(DEFAULT, Standard().WithLevels(TRACE+1).WithStartingLevel(TRACE+1))
-	defaultLogger.(*standardLogger).writer = buf
+	SetDefaultLogger(Standard().WithLevels(TRACE + 1).WithStartingLevel(TRACE + 1))
 
 	Printf(CRITICAL, "%v", "CRT")
 	Printf(ERROR, "%v", "ERR")
@@ -293,7 +254,7 @@ func ExamplePrintf() {
 	Printf(TRACE+1, "%v", "CUSTOM")
 	Printf(TRACE+2, "%v", "CUSTOM2")
 
-	os.Stdout.WriteString(buf.String())
+	// os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// CRT
@@ -306,9 +267,7 @@ func ExamplePrintf() {
 }
 
 func ExampleCustomLoggerTrace() {
-	buf.Reset()
 	logger, _ := GetWithOptions("TRC", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(TRACE)
 
 	logger.Critical("CRT")
@@ -317,8 +276,6 @@ func ExampleCustomLoggerTrace() {
 	logger.Info("INF")
 	logger.Debug("DBG")
 	logger.Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// TRC - CRT
@@ -330,9 +287,7 @@ func ExampleCustomLoggerTrace() {
 }
 
 func ExampleCustomLoggerDebug() {
-	buf.Reset()
 	logger, _ := GetWithOptions("DBG", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(DEBUG)
 
 	logger.Critical("CRT")
@@ -341,8 +296,6 @@ func ExampleCustomLoggerDebug() {
 	logger.Info("INF")
 	logger.Debug("DBG")
 	logger.Trace("TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// DBG - CRT
@@ -353,9 +306,7 @@ func ExampleCustomLoggerDebug() {
 }
 
 func ExampleCustomLoggerInfo() {
-	buf.Reset()
 	logger, _ := GetWithOptions("INF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(INFO)
 
 	logger.Critical("CRT")
@@ -365,8 +316,6 @@ func ExampleCustomLoggerInfo() {
 	logger.Debug("DBG")
 	logger.Trace("TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// INF - CRT
 	// INF - ERR
@@ -375,9 +324,7 @@ func ExampleCustomLoggerInfo() {
 }
 
 func ExampleCustomLoggerWarning() {
-	buf.Reset()
 	logger, _ := GetWithOptions("WRN", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(WARNING)
 
 	logger.Critical("CRT")
@@ -387,8 +334,6 @@ func ExampleCustomLoggerWarning() {
 	logger.Debug("DBG")
 	logger.Trace("TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// WRN - CRT
 	// WRN - ERR
@@ -396,9 +341,7 @@ func ExampleCustomLoggerWarning() {
 }
 
 func ExampleCustomLoggerError() {
-	buf.Reset()
 	logger, _ := GetWithOptions("ERR", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(ERROR)
 
 	logger.Critical("CRT")
@@ -408,17 +351,13 @@ func ExampleCustomLoggerError() {
 	logger.Debug("DBG")
 	logger.Trace("TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// ERR - CRT
 	// ERR - ERR
 }
 
 func ExampleCustomLoggerCritical() {
-	buf.Reset()
 	logger, _ := GetWithOptions("CRT", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(CRITICAL)
 
 	logger.Critical("CRT")
@@ -428,16 +367,12 @@ func ExampleCustomLoggerCritical() {
 	logger.Debug("DBG")
 	logger.Trace("TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// CRT - CRT
 }
 
 func ExampleCustomLoggerTracef() {
-	buf.Reset()
 	logger, _ := GetWithOptions("TRCF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(TRACE)
 
 	logger.Criticalf("%v", "CRT")
@@ -446,8 +381,6 @@ func ExampleCustomLoggerTracef() {
 	logger.Infof("%v", "INF")
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// TRCF - CRT
@@ -459,9 +392,7 @@ func ExampleCustomLoggerTracef() {
 }
 
 func ExampleCustomLoggerDebugf() {
-	buf.Reset()
 	logger, _ := GetWithOptions("DBGF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(DEBUG)
 
 	logger.Criticalf("%v", "CRT")
@@ -470,8 +401,6 @@ func ExampleCustomLoggerDebugf() {
 	logger.Infof("%v", "INF")
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// DBGF - CRT
@@ -482,9 +411,7 @@ func ExampleCustomLoggerDebugf() {
 }
 
 func ExampleCustomLoggerInfof() {
-	buf.Reset()
 	logger, _ := GetWithOptions("INFF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(INFO)
 
 	logger.Criticalf("%v", "CRT")
@@ -494,8 +421,6 @@ func ExampleCustomLoggerInfof() {
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// INFF - CRT
 	// INFF - ERR
@@ -504,9 +429,7 @@ func ExampleCustomLoggerInfof() {
 }
 
 func ExampleCustomLoggerWarningf() {
-	buf.Reset()
 	logger, _ := GetWithOptions("WRNF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(WARNING)
 
 	logger.Criticalf("%v", "CRT")
@@ -516,8 +439,6 @@ func ExampleCustomLoggerWarningf() {
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// WRNF - CRT
 	// WRNF - ERR
@@ -525,9 +446,7 @@ func ExampleCustomLoggerWarningf() {
 }
 
 func ExampleCustomLoggerErrorf() {
-	buf.Reset()
 	logger, _ := GetWithOptions("ERRF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(ERROR)
 
 	logger.Criticalf("%v", "CRT")
@@ -537,17 +456,13 @@ func ExampleCustomLoggerErrorf() {
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// ERRF - CRT
 	// ERRF - ERR
 }
 
 func ExampleCustomLoggerCriticalf() {
-	buf.Reset()
 	logger, _ := GetWithOptions("CRTF", Standard().WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(CRITICAL)
 
 	logger.Criticalf("%v", "CRT")
@@ -557,16 +472,12 @@ func ExampleCustomLoggerCriticalf() {
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
 	// CRTF - CRT
 }
 
 func ExampleCustomLoggerPrintln() {
-	buf.Reset()
 	logger, _ := GetWithOptions("PLN", Standard().WithLevels(TRACE+1).WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(TRACE + 1)
 
 	logger.Println(CRITICAL, "CRT")
@@ -577,8 +488,6 @@ func ExampleCustomLoggerPrintln() {
 	logger.Println(TRACE, "TRC")
 	logger.Println(TRACE+1, "CUSTOM")
 	logger.Println(TRACE+2, "CUSTOM2")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// PLN - CRT
@@ -591,9 +500,7 @@ func ExampleCustomLoggerPrintln() {
 }
 
 func ExampleCustomLoggerPrintf() {
-	buf.Reset()
 	logger, _ := GetWithOptions("PRTF", Standard().WithLevels(TRACE+1).WithLogPrefix(Name, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(TRACE + 1)
 
 	logger.Printf(CRITICAL, "%v", "CRT")
@@ -604,8 +511,6 @@ func ExampleCustomLoggerPrintf() {
 	logger.Printf(TRACE, "%v", "TRC")
 	logger.Printf(TRACE+1, "%v", "CUSTOM")
 	logger.Printf(TRACE+2, "%v", "CUSTOM2")
-
-	os.Stdout.WriteString(buf.String())
 
 	// Output:
 	// PRTF - CRT
@@ -618,9 +523,7 @@ func ExampleCustomLoggerPrintf() {
 }
 
 func ExampleCustomLoggerWithPattern() {
-	buf.Reset()
 	logger, _ := GetWithOptions("PATTERN", Standard().WithLogPrefix(Name, Source, Separator))
-	logger.(*standardLogger).writer = buf
 	logger.SetLevel(ERROR)
 
 	logger.Criticalf("%v", "CRT")
@@ -631,10 +534,8 @@ func ExampleCustomLoggerWithPattern() {
 	logger.Debugf("%v", "DBG")
 	logger.Tracef("%v", "TRC")
 
-	os.Stdout.WriteString(buf.String())
-
 	// Output:
-	// PATTERN example_test.go:626 - CRT
-	// PATTERN example_test.go:627 - ERR
-	// PATTERN example_test.go:628 - ERR
+	// PATTERN example_test.go:529 - CRT
+	// PATTERN example_test.go:530 - ERR
+	// PATTERN example_test.go:531 - ERR
 }

@@ -12,7 +12,7 @@ import (
 
 // logger Simple implementation of a Logger, using the standard go log as the actual logging framework
 type logger struct {
-	options         *Options  // the original options used to create the logger
+	options         *options  // the original options used to create the logger
 	level           uint      // the current log level
 	name            string    // the name of the logger (also the prefix for logging)
 	log             *l.Logger // standard fo log.Logger to actually log the entries

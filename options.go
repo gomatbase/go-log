@@ -5,23 +5,18 @@
 package log
 
 import (
-	l "log"
+	"io"
 )
 
+// constants for date format. Borrowing the same names from standard log package
 const (
-	// log pattern variables copied from standard log package for import easyness
-
-	Ldate         = l.Ldate         // the date in the local time zone: 2009/01/23
-	Ltime         = l.Ltime         // the time in the local time zone: 01:23:23
-	Lmicroseconds = l.Lmicroseconds // microsecond resolution: 01:23:23.123123.  assumes Ltime.
-	Llongfile     = l.Llongfile     // full file name and line number: /a/b/c/d.go:23
-	Lshortfile    = l.Lshortfile    // final file name element and line number: d.go:23. overrides Llongfile
-	LUTC          = l.LUTC          // if Ldate or Ltime is set, use UTC rather than the local time zone
-	Lmsgprefix    = l.Lmsgprefix    // move the "prefix" from the beginning of the line to before the message
-	LstdFlags     = l.LstdFlags     // initial values for the standard logger
+	Ldate         = iota // the date in the local time zone: 2009/01/23
+	Ltime                // the time in the local time zone: 01:23:23
+	Lmicroseconds        // microsecond resolution: 01:23:23.123123.  assumes Ltime.
+	LUTC                 // if Ldate or Ltime is set, use UTC rather than the local time zone
 )
 
-// Log message format constants to use in message format pattern
+// Log message format constants to use in message header format pattern
 const (
 	Time = iota
 	Name
@@ -36,18 +31,48 @@ const (
 	standard = iota
 )
 
-// Options holds the configuration for a new logger and provides methods to setup the configurable options
-type Options struct {
-	loggerType       uint     // type of logger the options are for
-	dateFlags        int      // format flags for the logger as per the go standard log package
-	failingCriticals bool     // flag setting if a critical log should result in a fatal entry (process exits)
-	startingLevel    uint     // the log level the logger should start in
-	levelFormats     [][]uint // formats used for each of the log levels
+// Options represents a logger options object and methods available to configure it
+type Options interface {
+	// DateFlags sets the format flags for the logger
+	DateFlags(flags int) Options
+
+	// WithFailingCriticals sets the logger to fail (exit process) when logging a critical
+	WithFailingCriticals() Options
+
+	// WithoutFailingCriticals sets the logger to log criticals as plain log entries (process doesn't break)
+	WithoutFailingCriticals() Options
+
+	// WithStartingLevel sets the initial log level the logger has
+	WithStartingLevel(startingLevel uint) Options
+
+	// WithLevelLogPrefix sets the log prefix format for a specific level
+	WithLevelLogPrefix(logLevel uint, flags ...uint) Options
+
+	// WithLogPrefix sets the log prefix format for all levels
+	WithLogPrefix(flags ...uint) Options
+
+	// WithLevels set the total number of log levels. Cannot be less than TRACE level.
+	WithLevels(levels uint) Options
+}
+
+type StandardWriter interface {
+	Options
+	WithWriter(writer io.Writer) Options
+}
+
+// options holds the configuration for a new logger and provides methods to setup the configurable options
+type options struct {
+	loggerType       uint      // type of logger the options are for
+	dateFlags        int       // format flags for the logger as per the go standard log package
+	failingCriticals bool      // flag setting if a critical log should result in a fatal entry (process exits)
+	startingLevel    uint      // the log level the logger should start in
+	levelFormats     [][]uint  // formats used for each of the log levels
+	writer           io.Writer // writer that should be used for a standard writer logger
 }
 
 // Standard creates an Options object for standard logging
-func Standard() *Options {
-	return &Options{
+func Standard() StandardWriter {
+	return &options{
 		loggerType:       standard,
 		dateFlags:        0,
 		failingCriticals: false,
@@ -56,26 +81,32 @@ func Standard() *Options {
 	}
 }
 
+// WithWriter sets the writer for a StandardWriter logger
+func (o *options) WithWriter(writer io.Writer) Options {
+	o.writer = writer
+	return o
+}
+
 // DateFlags sets the format flags for the logger
-func (o *Options) DateFlags(flags int) *Options {
+func (o *options) DateFlags(flags int) Options {
 	o.dateFlags = flags
 	return o
 }
 
 // WithFailingCriticals sets the logger to fail (exit process) when logging a critical
-func (o *Options) WithFailingCriticals() *Options {
+func (o *options) WithFailingCriticals() Options {
 	o.failingCriticals = true
 	return o
 }
 
 // WithoutFailingCriticals sets the logger to log criticals as plain log entries (process doesn't break)
-func (o *Options) WithoutFailingCriticals() *Options {
+func (o *options) WithoutFailingCriticals() Options {
 	o.failingCriticals = false
 	return o
 }
 
 // WithStartingLevel sets the initial log level the logger has
-func (o *Options) WithStartingLevel(startingLevel uint) *Options {
+func (o *options) WithStartingLevel(startingLevel uint) Options {
 	o.startingLevel = startingLevel
 	return o
 }
@@ -93,7 +124,7 @@ func validatePrefixFlags(flags []uint) {
 }
 
 // WithLevelLogPrefix sets the log prefix format for a specific level
-func (o *Options) WithLevelLogPrefix(logLevel uint, flags ...uint) *Options {
+func (o *options) WithLevelLogPrefix(logLevel uint, flags ...uint) Options {
 	validatePrefixFlags(flags)
 	if int(logLevel) >= len(o.levelFormats) {
 		for i := len(o.levelFormats); i <= int(logLevel); i++ {
@@ -105,7 +136,7 @@ func (o *Options) WithLevelLogPrefix(logLevel uint, flags ...uint) *Options {
 }
 
 // WithLogPrefix sets the log prefix format for all levels
-func (o *Options) WithLogPrefix(flags ...uint) *Options {
+func (o *options) WithLogPrefix(flags ...uint) Options {
 	validatePrefixFlags(flags)
 	for i, _ := range o.levelFormats {
 		o.levelFormats[i] = flags
@@ -114,7 +145,7 @@ func (o *Options) WithLogPrefix(flags ...uint) *Options {
 }
 
 // WithLevels set the total number of log levels. Cannot be less than TRACE level.
-func (o *Options) WithLevels(levels uint) *Options {
+func (o *options) WithLevels(levels uint) Options {
 	if levels <= TRACE {
 		panic("must not set less log levels than default TRACE level")
 	}
@@ -122,6 +153,6 @@ func (o *Options) WithLevels(levels uint) *Options {
 }
 
 // equals compares if the options object is an exact match to another options object
-func (o *Options) equals(options *Options) bool {
+func (o *options) equals(options *options) bool {
 	return o.failingCriticals == options.failingCriticals && o.dateFlags == options.dateFlags && o.startingLevel == options.startingLevel
 }
