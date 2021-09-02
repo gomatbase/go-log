@@ -29,6 +29,7 @@ const (
 // Types of loggers
 const (
 	standard = iota
+	syncedAppender
 )
 
 // Options represents a logger options object and methods available to configure it
