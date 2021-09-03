@@ -2,31 +2,22 @@
 // Since 25/06/2021 By GOM
 // Licensed under MIT License
 
-package log
+package log_test
 
 import (
-	"bytes"
+	"github.com/gomatbase/go-log"
 )
 
-var buf = &bytes.Buffer{}
-
-func resetLoggers() {
-	buf.Reset()
-	loggers = make(map[string]Logger)
-	defaultLogger, _ = newLogger(DEFAULT, Standard().WithWriter(buf).(*options))
-	loggers[DEFAULT] = defaultLogger
-}
-
 func ExampleTrace() {
-	SetDefaultLogger(Standard())
-	SetLevel(TRACE)
+	_ = log.SetDefaultLogger(log.Standard())
+	log.SetLevel(log.TRACE)
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
@@ -38,14 +29,14 @@ func ExampleTrace() {
 }
 
 func ExampleDebug() {
-	SetDefaultLogger(Standard().WithStartingLevel(DEBUG))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.DEBUG))
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
@@ -56,14 +47,14 @@ func ExampleDebug() {
 }
 
 func ExampleInfo() {
-	SetDefaultLogger(Standard().WithStartingLevel(INFO))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.INFO))
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
@@ -73,14 +64,14 @@ func ExampleInfo() {
 }
 
 func ExampleWarning() {
-	SetDefaultLogger(Standard())
+	log.SetDefaultLogger(log.Standard())
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
@@ -89,14 +80,14 @@ func ExampleWarning() {
 }
 
 func ExampleError() {
-	SetDefaultLogger(Standard().WithStartingLevel(ERROR))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.ERROR))
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
@@ -104,28 +95,28 @@ func ExampleError() {
 }
 
 func ExampleCritical() {
-	SetDefaultLogger(Standard().WithStartingLevel(CRITICAL))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.CRITICAL))
 
-	Critical("CRT")
-	Error("ERR")
-	Warning("WRN")
-	Info("INF")
-	Debug("DBG")
-	Trace("TRC")
+	log.Critical("CRT")
+	log.Error("ERR")
+	log.Warning("WRN")
+	log.Info("INF")
+	log.Debug("DBG")
+	log.Trace("TRC")
 
 	// Output:
 	// CRT
 }
 
 func ExampleTracef() {
-	SetDefaultLogger(Standard().WithStartingLevel(TRACE))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.TRACE))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
@@ -137,14 +128,14 @@ func ExampleTracef() {
 }
 
 func ExampleDebugf() {
-	SetDefaultLogger(Standard().WithStartingLevel(DEBUG))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.DEBUG))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
@@ -155,14 +146,14 @@ func ExampleDebugf() {
 }
 
 func ExampleInfof() {
-	SetDefaultLogger(Standard().WithStartingLevel(INFO))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.INFO))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
@@ -172,14 +163,14 @@ func ExampleInfof() {
 }
 
 func ExampleWarningf() {
-	SetDefaultLogger(Standard())
+	log.SetDefaultLogger(log.Standard())
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
@@ -188,14 +179,14 @@ func ExampleWarningf() {
 }
 
 func ExampleErrorf() {
-	SetDefaultLogger(Standard().WithStartingLevel(ERROR))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.ERROR))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
@@ -203,37 +194,66 @@ func ExampleErrorf() {
 }
 
 func ExampleCriticalf() {
-	SetDefaultLogger(Standard().WithStartingLevel(CRITICAL))
+	_ = log.SetDefaultLogger(log.Standard().WithStartingLevel(log.CRITICAL))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
 	// CRT
 }
 
-func ExampleDefaultLoggerWithPattern() {
-	SetDefaultLogger(Standard().WithLogPrefix(Name, Source, Separator).WithStartingLevel(ERROR))
+func ExampleSetDefaultLogger() {
+	_ = log.SetDefaultLogger(log.Standard().WithLogPrefix(log.Name, log.Source, log.Separator).WithStartingLevel(log.ERROR))
 
-	Criticalf("%v", "CRT")
-	Errorf("%v", "ERR")
-	Warningf("%v", "WRN")
-	Infof("%v", "INF")
-	Debugf("%v", "DBG")
-	Tracef("%v", "TRC")
+	log.Criticalf("%v", "CRT")
+	log.Errorf("%v", "ERR")
+	log.Warningf("%v", "WRN")
+	log.Infof("%v", "INF")
+	log.Debugf("%v", "DBG")
+	log.Tracef("%v", "TRC")
 
 	// Output:
-	// DEFAULT example_test.go:222 - CRT
-	// DEFAULT example_test.go:223 - ERR
+	// DEFAULT example_test.go:213 - CRT
+	// DEFAULT example_test.go:214 - ERR
 }
 
-func ExampleStandardLoggerTrace() {
-	logger, _ := GetWithOptions("TRC", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(TRACE)
+func ExampleStandard() {
+	logger, _ := log.GetWithOptions("TRC", log.Standard().WithLogPrefix(log.Name, log.Separator).WithStartingLevel(log.TRACE))
+
+	logger.Critical("CRT")
+	logger.Error("ERR")
+	logger.Warning("WRN")
+	logger.Info("INF")
+	logger.Debug("DBG")
+	logger.Trace("TRC")
+
+	logger, _ = log.GetWithOptions("DBG", log.Standard().WithLogPrefix(log.Name, log.Separator))
+	logger.SetLevel(log.DEBUG)
+
+	logger.Critical("CRT")
+	logger.Error("ERR")
+	logger.Warning("WRN")
+	logger.Info("INF")
+	logger.Debug("DBG")
+	logger.Trace("TRC")
+
+	logger, _ = log.GetWithOptions("INF", log.Standard().WithLogPrefix(log.Name, log.Separator))
+	logger.SetLevel(log.INFO)
+
+	logger.Critical("CRT")
+	logger.Error("ERR")
+	logger.Warning("WRN")
+	logger.Info("INF")
+	logger.Debug("DBG")
+	logger.Trace("TRC")
+
+	logger, _ = log.GetWithOptions("WRN", log.Standard().WithLogPrefix(log.Name, log.Separator))
+	logger.SetLevel(log.WARNING)
 
 	logger.Critical("CRT")
 	logger.Error("ERR")
@@ -249,210 +269,16 @@ func ExampleStandardLoggerTrace() {
 	// TRC - INF
 	// TRC - DBG
 	// TRC - TRC
-}
-
-func ExampleStandardLoggerDebug() {
-	logger, _ := GetWithOptions("DBG", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(DEBUG)
-
-	logger.Critical("CRT")
-	logger.Error("ERR")
-	logger.Warning("WRN")
-	logger.Info("INF")
-	logger.Debug("DBG")
-	logger.Trace("TRC")
-
-	// Output:
 	// DBG - CRT
 	// DBG - ERR
 	// DBG - WRN
 	// DBG - INF
 	// DBG - DBG
-}
-
-func ExampleStandardLoggerInfo() {
-	logger, _ := GetWithOptions("INF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(INFO)
-
-	logger.Critical("CRT")
-	logger.Error("ERR")
-	logger.Warning("WRN")
-	logger.Info("INF")
-	logger.Debug("DBG")
-	logger.Trace("TRC")
-
-	// Output:
 	// INF - CRT
 	// INF - ERR
 	// INF - WRN
 	// INF - INF
-}
-
-func ExampleStandardLoggerWarning() {
-	logger, _ := GetWithOptions("WRN", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(WARNING)
-
-	logger.Critical("CRT")
-	logger.Error("ERR")
-	logger.Warning("WRN")
-	logger.Info("INF")
-	logger.Debug("DBG")
-	logger.Trace("TRC")
-
-	// Output:
 	// WRN - CRT
 	// WRN - ERR
 	// WRN - WRN
-}
-
-func ExampleStandardLoggerError() {
-	logger, _ := GetWithOptions("ERR", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(ERROR)
-
-	logger.Critical("CRT")
-	logger.Error("ERR")
-	logger.Warning("WRN")
-	logger.Info("INF")
-	logger.Debug("DBG")
-	logger.Trace("TRC")
-
-	// Output:
-	// ERR - CRT
-	// ERR - ERR
-}
-
-func ExampleStandardLoggerCritical() {
-	logger, _ := GetWithOptions("CRT", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(CRITICAL)
-
-	logger.Critical("CRT")
-	logger.Error("ERR")
-	logger.Warning("WRN")
-	logger.Info("INF")
-	logger.Debug("DBG")
-	logger.Trace("TRC")
-
-	// Output:
-	// CRT - CRT
-}
-
-func ExampleStandardLoggerTracef() {
-	logger, _ := GetWithOptions("TRCF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(TRACE)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// TRCF - CRT
-	// TRCF - ERR
-	// TRCF - WRN
-	// TRCF - INF
-	// TRCF - DBG
-	// TRCF - TRC
-}
-
-func ExampleStandardLoggerDebugf() {
-	logger, _ := GetWithOptions("DBGF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(DEBUG)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// DBGF - CRT
-	// DBGF - ERR
-	// DBGF - WRN
-	// DBGF - INF
-	// DBGF - DBG
-}
-
-func ExampleStandardLoggerInfof() {
-	logger, _ := GetWithOptions("INFF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(INFO)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// INFF - CRT
-	// INFF - ERR
-	// INFF - WRN
-	// INFF - INF
-}
-
-func ExampleStandardLoggerWarningf() {
-	logger, _ := GetWithOptions("WRNF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(WARNING)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// WRNF - CRT
-	// WRNF - ERR
-	// WRNF - WRN
-}
-
-func ExampleStandardLoggerErrorf() {
-	logger, _ := GetWithOptions("ERRF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(ERROR)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// ERRF - CRT
-	// ERRF - ERR
-}
-
-func ExampleStandardLoggerCriticalf() {
-	logger, _ := GetWithOptions("CRTF", Standard().WithLogPrefix(Name, Separator))
-	logger.SetLevel(CRITICAL)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// CRTF - CRT
-}
-
-func ExampleStandardLoggerWithPattern() {
-	logger, _ := GetWithOptions("PATTERN", Standard().WithLogPrefix(Name, Source, Separator))
-	logger.SetLevel(ERROR)
-
-	logger.Criticalf("%v", "CRT")
-	logger.Errorf("%v", "ERR")
-	logger.Warningf("%v", "WRN")
-	logger.Infof("%v", "INF")
-	logger.Debugf("%v", "DBG")
-	logger.Tracef("%v", "TRC")
-
-	// Output:
-	// PATTERN example_test.go:448 - CRT
-	// PATTERN example_test.go:449 - ERR
 }

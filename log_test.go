@@ -5,8 +5,18 @@
 package log
 
 import (
+	"bytes"
 	"testing"
 )
+
+var buf = &bytes.Buffer{}
+
+func resetLoggers() {
+	buf.Reset()
+	loggers = make(map[string]Logger)
+	defaultLogger, _ = newLogger(DEFAULT, Standard().WithWriter(buf).(*options))
+	loggers[DEFAULT] = defaultLogger
+}
 
 func TestGettingLog(t *testing.T) {
 	log, e := Get("Test Override")
