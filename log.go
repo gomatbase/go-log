@@ -77,18 +77,18 @@ func getWithOptions(name string, o Options) (Logger, error) {
 }
 
 // SetDefaultLogger allows overriding the default logger with different options
-func SetDefaultLogger(o Options) (Logger, error) {
+func SetDefaultLogger(o Options) error {
 	lock.Lock()
 	defer lock.Unlock()
 
 	if logger, e := newLogger(DEFAULT, o.(*options)); e != nil {
-		return nil, e
+		return e
 	} else {
 		defaultLogger = logger
 		loggers[DEFAULT] = logger
 	}
 
-	return defaultLogger, nil
+	return nil
 }
 
 // newLogger creates a new logger with the given name from the provided options
