@@ -4,10 +4,10 @@ package log
 type Logger interface {
 
 	// SetLevel sets the current log level of the logger
-	SetLevel(severity)
+	SetLevel(int)
 
 	// Level returns the current log level of the logger
-	Level() severity
+	Level() int
 
 	// Critical logs the message(s) at the critical level
 	Critical(v ...interface{})
@@ -46,8 +46,8 @@ type Logger interface {
 	Tracef(format string, v ...interface{})
 
 	// println logs the message(s) at the provided level
-	println(level severity, v ...interface{})
+	println(level int, v ...interface{})
 
 	// printf logs the formatted message at the provided level
-	printf(level severity, format string, v ...interface{})
+	printf(level int, format string, v ...interface{})
 }

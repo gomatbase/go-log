@@ -9,7 +9,7 @@ import (
 
 type syncedAppenders struct {
 	options         *options // the original options used to create the logger
-	level           severity // the current log level
+	level           int      // the current log level
 	levelHasSource  []bool
 	name            string
 	criticalFailure bool
@@ -23,12 +23,12 @@ func newSyncedAppenders(o *options) *syncedAppenders {
 }
 
 // SetLevel sets the current log level of the logger
-func (sa *syncedAppenders) SetLevel(level severity) {
+func (sa *syncedAppenders) SetLevel(level int) {
 	sa.level = level
 }
 
 // Level returns the current log level of the logger
-func (sa *syncedAppenders) Level() severity {
+func (sa *syncedAppenders) Level() int {
 	return sa.level
 }
 
@@ -93,7 +93,7 @@ func (sa *syncedAppenders) Tracef(format string, v ...interface{}) {
 }
 
 // println logs the message(s) at the provided level
-func (sa *syncedAppenders) println(level severity, v ...interface{}) {
+func (sa *syncedAppenders) println(level int, v ...interface{}) {
 	if level <= sa.level {
 		sa.output(level, fmt.Sprintln(v...))
 	}
@@ -103,7 +103,7 @@ func (sa *syncedAppenders) println(level severity, v ...interface{}) {
 }
 
 // printf logs the formatted message at the provided level
-func (sa *syncedAppenders) printf(level severity, format string, v ...interface{}) {
+func (sa *syncedAppenders) printf(level int, format string, v ...interface{}) {
 	if level <= sa.level {
 		sa.output(level, fmt.Sprintf(format, v...))
 	}
@@ -112,7 +112,7 @@ func (sa *syncedAppenders) printf(level severity, format string, v ...interface{
 	}
 }
 
-func (sa *syncedAppenders) output(level severity, message string) {
+func (sa *syncedAppenders) output(level int, message string) {
 	sa.mutex.Lock()
 	defer sa.mutex.Unlock()
 

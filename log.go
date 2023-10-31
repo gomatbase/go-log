@@ -8,19 +8,16 @@ import (
 	"sync"
 )
 
-// severity type
-type severity int
-
 // Log Severity levels
 const (
-	CRITICAL = severity(0) // Critical log level (Always logged)
-	ERROR    = severity(1) // Error log level
-	WARNING  = severity(2) // Warning log level (Default level)
-	INFO     = severity(3) // Info log level
-	DEBUG    = severity(4) // Debug log level
-	TRACE    = severity(5) // Trace log level
+	CRITICAL = iota // Critical log level (Always logged)
+	ERROR           // Error log level
+	WARNING         // Warning log level (Default level)
+	INFO            // Info log level
+	DEBUG           // Debug log level
+	TRACE           // Trace log level
 
-	UNKNOWN = severity(-1) // used as error log type for unknown levels
+	UNKNOWN = -1 // used as error log type for unknown levels
 )
 
 // DEFAULT is the name of the default logger
@@ -31,7 +28,7 @@ var (
 	levelNames = []string{"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
 
 	// dictionary to convert a level name to severity
-	levelSeverities = map[string]severity{
+	levelSeverities = map[string]int{
 		levelNames[CRITICAL]: CRITICAL,
 		levelNames[ERROR]:    ERROR,
 		levelNames[WARNING]:  WARNING,
@@ -118,12 +115,12 @@ func newLogger(name string, o *options) (Logger, error) {
 }
 
 // SetLevel sets the log level of the default logger
-func SetLevel(level severity) {
+func SetLevel(level int) {
 	defaultLogger.SetLevel(level)
 }
 
 // SetLoggerLevel sets the log level of a logger by name. DEFAULT may be used to set the default logger level.
-func SetLoggerLevel(name string, level severity) error {
+func SetLoggerLevel(name string, level int) error {
 	lock.Lock()
 	logger, found := loggers[name]
 	lock.Unlock()
@@ -137,8 +134,8 @@ func SetLoggerLevel(name string, level severity) error {
 }
 
 // SetLoggerLevels sets the log levels of several loggers at once. If any logger is not found it will be omitted from the response
-func SetLoggerLevels(loggerLevels map[string]severity) map[string]severity {
-	result := make(map[string]severity)
+func SetLoggerLevels(loggerLevels map[string]int) map[string]int {
+	result := make(map[string]int)
 
 	for k, l := range loggerLevels {
 		if e := SetLoggerLevel(k, l); e == nil {
@@ -150,13 +147,13 @@ func SetLoggerLevels(loggerLevels map[string]severity) map[string]severity {
 }
 
 // Level returns the current log level of the default logger
-func Level() severity {
+func Level() int {
 	return defaultLogger.Level()
 }
 
 // LoggerLevels gets the current log levels of all known loggers
-func LoggerLevels() map[string]severity {
-	loggerLevels := make(map[string]severity)
+func LoggerLevels() map[string]int {
+	loggerLevels := make(map[string]int)
 	lock.Lock()
 	for k, l := range loggers {
 		loggerLevels[k] = l.Level()
@@ -167,7 +164,7 @@ func LoggerLevels() map[string]severity {
 
 // LoggerLevel gets the current log level of the logger with the given name. ErrLoggerDoesNotExist is returned as an
 // error if a logger with the given name doesn't is unknown.
-func LoggerLevel(name string) (severity, error) {
+func LoggerLevel(name string) (int, error) {
 	lock.Lock()
 	logger, found := loggers[name]
 	lock.Unlock()
@@ -201,18 +198,18 @@ func LoggerLevelNames() map[string]string {
 
 // LevelName is a convenience method to translate the log level into a name. It only works for loggers implementing
 // the default severity scale.
-func LevelName(level severity) string {
+func LevelName(level int) string {
 	if int(level) >= len(levelNames) {
 		return "UNKNOWN"
 	}
 	return levelNames[level]
 }
 
-func LevelSeverity(name string) severity {
+func LevelSeverity(name string) int {
 	if s, found := levelSeverities[name]; found {
 		return s
 	}
-	return severity(-1)
+	return UNKNOWN
 }
 
 // Critical logs a critical log entry through the default logger

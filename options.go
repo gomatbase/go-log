@@ -44,10 +44,10 @@ type Options interface {
 	WithoutFailingCriticals() Options
 
 	// WithStartingLevel sets the initial log level the logger has
-	WithStartingLevel(startingLevel severity) Options
+	WithStartingLevel(startingLevel int) Options
 
 	// WithLevelLogPrefix sets the log prefix format for a specific level
-	WithLevelLogPrefix(logLevel severity, flags ...uint) Options
+	WithLevelLogPrefix(logLevel int, flags ...uint) Options
 
 	// WithLogPrefix sets the log prefix format for all levels
 	WithLogPrefix(flags ...uint) Options
@@ -67,7 +67,7 @@ type options struct {
 	loggerType       uint      // type of logger the options are for
 	dateFlags        int       // format flags for the logger as per the go standard log package
 	failingCriticals bool      // flag setting if a critical log should result in a fatal entry (process exits)
-	startingLevel    severity  // the log level the logger should start in
+	startingLevel    int       // the log level the logger should start in
 	levelFormats     [][]uint  // formats used for each of the log levels
 	writer           io.Writer // writer that should be used for a standard writer logger
 }
@@ -116,7 +116,7 @@ func (o *options) WithoutFailingCriticals() Options {
 }
 
 // WithStartingLevel sets the initial log level the logger has
-func (o *options) WithStartingLevel(startingLevel severity) Options {
+func (o *options) WithStartingLevel(startingLevel int) Options {
 	o.startingLevel = startingLevel
 	return o
 }
@@ -134,7 +134,7 @@ func validatePrefixFlags(flags []uint) {
 }
 
 // WithLevelLogPrefix sets the log prefix format for a specific level
-func (o *options) WithLevelLogPrefix(logLevel severity, flags ...uint) Options {
+func (o *options) WithLevelLogPrefix(logLevel int, flags ...uint) Options {
 	validatePrefixFlags(flags)
 	if int(logLevel) >= len(o.levelFormats) {
 		for i := len(o.levelFormats); i <= int(logLevel); i++ {

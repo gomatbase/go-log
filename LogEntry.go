@@ -6,7 +6,7 @@ import (
 
 type LogEntry struct {
 	Timestamp time.Time
-	Level     severity
+	Level     int
 	Message   string
 	Source    *string
 	Line      int
