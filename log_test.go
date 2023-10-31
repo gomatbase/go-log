@@ -76,6 +76,18 @@ func TestLevelNames(t *testing.T) {
 	}
 }
 
+func TestLevelSeverities(t *testing.T) {
+	for i, name := range levelNames {
+		if returnedSeverity := LevelSeverity(name); returnedSeverity != severity(i) {
+			t.Errorf("Unexpected level severity for level %s: (expected %v, got %v)", name, i, returnedSeverity)
+		}
+	}
+
+	if returnedSeverity := LevelSeverity("something"); returnedSeverity != UNKNOWN {
+		t.Errorf("Unexpected level names should be unknown got %v with level name \"something\"", returnedSeverity)
+	}
+}
+
 func TestSettingLogLevels(t *testing.T) {
 	resetLoggers()
 

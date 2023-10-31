@@ -19,13 +19,27 @@ const (
 	INFO     = severity(3) // Info log level
 	DEBUG    = severity(4) // Debug log level
 	TRACE    = severity(5) // Trace log level
+
+	UNKNOWN = severity(-1) // used as error log type for unknown levels
 )
 
 // DEFAULT is the name of the default logger
 const DEFAULT = "DEFAULT"
 
-// dictionary to translate the log level to it's name (for the default severity scale)
-var levelNames = []string{"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
+var (
+	// dictionary to translate the log level to it's name (for the default severity scale)
+	levelNames = []string{"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"}
+
+	// dictionary to convert a level name to severity
+	levelSeverities = map[string]severity{
+		levelNames[CRITICAL]: CRITICAL,
+		levelNames[ERROR]:    ERROR,
+		levelNames[WARNING]:  WARNING,
+		levelNames[INFO]:     INFO,
+		levelNames[DEBUG]:    DEBUG,
+		levelNames[TRACE]:    TRACE,
+	}
+)
 
 var (
 	loggers          = make(map[string]Logger)             // map of all existing loggers. Indexed by their names.
@@ -192,6 +206,13 @@ func LevelName(level severity) string {
 		return "UNKNOWN"
 	}
 	return levelNames[level]
+}
+
+func LevelSeverity(name string) severity {
+	if s, found := levelSeverities[name]; found {
+		return s
+	}
+	return severity(-1)
 }
 
 // Critical logs a critical log entry through the default logger
