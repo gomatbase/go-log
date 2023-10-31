@@ -33,6 +33,7 @@ type standardLogger struct {
 	levelFormats    []headerFormat
 	mutex           sync.Mutex
 	criticalFailure bool
+	callDepth       int
 }
 
 func newStandardLogger(name string, options *options) Logger {
@@ -46,6 +47,10 @@ func newStandardLogger(name string, options *options) Logger {
 			}
 		}
 	}
+	callDepth := 3
+	if name == DEFAULT {
+		callDepth = 4
+	}
 	return &standardLogger{
 		options:         options,
 		level:           options.startingLevel,
@@ -53,6 +58,7 @@ func newStandardLogger(name string, options *options) Logger {
 		writer:          os.Stdout,
 		levelFormats:    levelFormats,
 		criticalFailure: options.failingCriticals,
+		callDepth:       callDepth,
 	}
 }
 
@@ -115,7 +121,7 @@ func (logger *standardLogger) Tracef(format string, v ...interface{}) {
 
 func (logger *standardLogger) println(level int, v ...interface{}) {
 	if level <= logger.level {
-		logger.output(level, 3, fmt.Sprintln(v...))
+		logger.output(level, logger.callDepth, fmt.Sprintln(v...))
 	}
 	if level == 0 && logger.criticalFailure {
 		panic("critical failure")
@@ -124,7 +130,7 @@ func (logger *standardLogger) println(level int, v ...interface{}) {
 
 func (logger *standardLogger) printf(level int, format string, v ...interface{}) {
 	if level <= logger.level {
-		logger.output(level, 3, fmt.Sprintf(format, v...))
+		logger.output(level, logger.callDepth, fmt.Sprintf(format, v...))
 	}
 	if level == 0 && logger.criticalFailure {
 		panic("critical failure")

@@ -214,60 +214,60 @@ func LevelSeverity(name string) int {
 
 // Critical logs a critical log entry through the default logger
 func Critical(v ...interface{}) {
-	defaultLogger.println(CRITICAL, v...)
+	defaultLogger.Critical(v...)
 }
 
 // Criticalf logs a formatted critical log entry through the default logger
 func Criticalf(format string, v ...interface{}) {
-	defaultLogger.printf(CRITICAL, format, v...)
+	defaultLogger.Criticalf(format, v...)
 }
 
 // Error logs a error log entry through the default logger
 func Error(v ...interface{}) {
-	defaultLogger.println(ERROR, v...)
+	defaultLogger.Error(v...)
 }
 
 // Errorf logs a formatted error log entry through the default logger
 func Errorf(format string, v ...interface{}) {
-	defaultLogger.printf(ERROR, format, v...)
+	defaultLogger.Errorf(format, v...)
 }
 
 // Warning logs a warning log entry through the default logger
 func Warning(v ...interface{}) {
-	defaultLogger.println(WARNING, v...)
+	defaultLogger.Warning(v...)
 }
 
 // Warningf logs a formatted warning log entry through the default logger
 func Warningf(format string, v ...interface{}) {
-	defaultLogger.printf(WARNING, format, v...)
+	defaultLogger.Warningf(format, v...)
 }
 
 // Info logs a info log entry through the default logger
 func Info(v ...interface{}) {
-	defaultLogger.println(INFO, v...)
+	defaultLogger.Info(v...)
 }
 
 // Infof logs a formatted info log entry through the default logger
 func Infof(format string, v ...interface{}) {
-	defaultLogger.printf(INFO, format, v...)
+	defaultLogger.Infof(format, v...)
 }
 
 // Debug logs a debug log entry through the default logger
 func Debug(v ...interface{}) {
-	defaultLogger.println(DEBUG, v...)
+	defaultLogger.Debug(v...)
 }
 
 // Debugf logs a formatted debug log entry through the default logger
 func Debugf(format string, v ...interface{}) {
-	defaultLogger.printf(DEBUG, format, v...)
+	defaultLogger.Debugf(format, v...)
 }
 
 // Trace logs a trace log entry through the default logger
 func Trace(v ...interface{}) {
-	defaultLogger.println(TRACE, v...)
+	defaultLogger.Trace(v...)
 }
 
 // Tracef logs a formatted trace log entry through the default logger
 func Tracef(format string, v ...interface{}) {
-	defaultLogger.printf(TRACE, format, v...)
+	defaultLogger.Tracef(format, v...)
 }
