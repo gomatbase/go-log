@@ -44,10 +44,4 @@ type Logger interface {
 
 	// Tracef logs the formatted message at the trace level
 	Tracef(format string, v ...interface{})
-
-	// println logs the message(s) at the provided level
-	println(level int, v ...interface{})
-
-	// printf logs the formatted message at the provided level
-	printf(level int, format string, v ...interface{})
 }
