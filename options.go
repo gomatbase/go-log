@@ -122,7 +122,7 @@ func (o *options) WithStartingLevel(startingLevel int) Options {
 }
 
 func validatePrefixFlags(flags []uint) {
-	foundFlags := []bool{false, false, false, false, false}
+	foundFlags := []bool{false, false, false, false, false, false}
 	for _, flag := range flags {
 		if flag > LogLevel {
 			panic("Unknown lof prefix flag")
@@ -148,7 +148,7 @@ func (o *options) WithLevelLogPrefix(logLevel int, flags ...uint) Options {
 // WithLogPrefix sets the log prefix format for all levels
 func (o *options) WithLogPrefix(flags ...uint) Options {
 	validatePrefixFlags(flags)
-	for i, _ := range o.levelFormats {
+	for i := range o.levelFormats {
 		o.levelFormats[i] = flags
 	}
 	return o
